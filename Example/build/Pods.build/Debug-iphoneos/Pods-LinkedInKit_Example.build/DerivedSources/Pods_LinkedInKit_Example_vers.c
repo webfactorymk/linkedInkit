@@ -1,0 +1,1 @@
+ const unsigned char Pods_LinkedInKit_ExampleVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:Pods_LinkedInKit_Example  PROJECT:Pods-1" "\n"; const double Pods_LinkedInKit_ExampleVersionNumber __attribute__ ((used)) = (double)1.;

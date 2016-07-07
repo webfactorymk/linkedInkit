@@ -1,0 +1,22 @@
+{
+  "name": "LinkedInKit",
+  "version": "0.1.0",
+  "summary": "A short description of LinkedInKit.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/LinkedInKit",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Mariana": "mariana.ristovska@webfactory.mk"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/LinkedInKit.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "LinkedInKit/Classes/**/*"
+}
