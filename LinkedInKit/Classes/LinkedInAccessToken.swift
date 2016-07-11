@@ -1,6 +1,6 @@
 import Foundation
 
-class LinkedInAccessToken: NSObject, NSCoding {
+public class LinkedInAccessToken: NSObject, NSCoding {
 
     private static let AccessTokenKey = "WF.LinkedIn.accessTokenKey"
     private static let ExpireDateKey = "WF.LinkedIn.expireDateKey"
@@ -18,13 +18,13 @@ class LinkedInAccessToken: NSObject, NSCoding {
         self.isSDK = isSDK
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         accessToken = aDecoder.decodeObjectForKey(LinkedInAccessToken.AccessTokenKey) as? String
         expireDate = aDecoder.decodeObjectForKey(LinkedInAccessToken.ExpireDateKey) as? NSDate
         isSDK = aDecoder.decodeObjectForKey(LinkedInAccessToken.IsMobileSDKKey) as? Bool
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
+    public func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(accessToken, forKey: LinkedInAccessToken.AccessTokenKey)
         aCoder.encodeObject(expireDate, forKey: LinkedInAccessToken.ExpireDateKey)
         aCoder.encodeObject(isSDK, forKey: LinkedInAccessToken.IsMobileSDKKey)

@@ -1,6 +1,6 @@
 import Foundation
 
-class LinkedInConfiguration: NSObject {
+public class LinkedInConfiguration: NSObject {
     
     var clientID: String
     var clientSecret: String
@@ -9,7 +9,7 @@ class LinkedInConfiguration: NSObject {
     var redirectURL: String
     var appID: String
     
-    init(withClientID clientID: String,
+    public init(withClientID clientID: String,
                       clientSecret: String,
                       state: String,
                       permissions: [String]?,

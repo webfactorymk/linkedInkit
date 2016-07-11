@@ -1,14 +1,14 @@
 import Foundation
 import Alamofire
 
-class LinkedInHTTPClient: Alamofire.Manager {
+public class LinkedInHTTPClient: Alamofire.Manager {
     
     let linkedInConfiguration: LinkedInConfiguration
     var presentingViewController: UIViewController?
     
     var viewControllerDelegate: LinkedInAuthorizationViewControllerDelegate?
     
-    init(linkedInConfiguration: LinkedInConfiguration, presentingViewController: UIViewController?) {
+    public init(linkedInConfiguration: LinkedInConfiguration, presentingViewController: UIViewController?) {
         self.linkedInConfiguration = linkedInConfiguration
         self.presentingViewController = presentingViewController
         

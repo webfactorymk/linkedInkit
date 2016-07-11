@@ -1,11 +1,11 @@
 import Foundation
 
-typealias LinkedInAuthSuccessCallback = (token: LinkedInAccessToken?) -> ()
-typealias LinkedInAuthFailureCallback = (error: NSError?) -> ()
+public typealias LinkedInAuthSuccessCallback = (token: LinkedInAccessToken?) -> ()
+public typealias LinkedInAuthFailureCallback = (error: NSError?) -> ()
 typealias LinkedInRequestSuccessCallback = (response: LinkedInSDKResponse?) -> ()
 typealias LinkedInRequestFailureCallback = (error: LISDKAPIError?) -> ()
 
-class LinkedInAuthenticator: NSObject {
+public class LinkedInAuthenticator: NSObject {
     
     private let configuration: LinkedInConfiguration
     private let httpClient: LinkedInHTTPClient
@@ -15,15 +15,15 @@ class LinkedInAuthenticator: NSObject {
         return accessToken != nil && accessToken?.expireDate > NSDate()
     }
     
-    init(configuration: LinkedInConfiguration, httpClient: LinkedInHTTPClient) {
+    public init(configuration: LinkedInConfiguration, httpClient: LinkedInHTTPClient) {
         self.configuration = configuration
         self.httpClient = httpClient
         super.init()
     }
     
     // MARK: Authentication
-    func authenticate(success: LinkedInAuthSuccessCallback?,
-                      failure: LinkedInAuthFailureCallback?) {
+    public func authenticate(success: LinkedInAuthSuccessCallback?,
+                             failure: LinkedInAuthFailureCallback?) {
         
         // Check if previous token is still in memory and is valid
         if let accessToken = accessToken where accessToken.expireDate > NSDate() {
@@ -68,11 +68,13 @@ class LinkedInAuthenticator: NSObject {
         }
     }
     
-    private static func tokenFromSDKSession(session: LISDKSession) -> LinkedInAccessToken {
-        let session = LISDKSessionManager.sharedInstance().session
-        return LinkedInAccessToken(withAccessToken: session.accessToken.accessTokenValue,
-                                   expireDate: session.accessToken.expiration,
-                                   isSDK: true)
+    private static func tokenFromSDKSession(session: LISDKSession) -> LinkedInAccessToken? {
+        if let session = LISDKSessionManager.sharedInstance().session where session.isValid() {
+            return LinkedInAccessToken(withAccessToken: session.accessToken.accessTokenValue,
+                                       expireDate: session.accessToken.expiration,
+                                       isSDK: true)
+        }
+        return nil
     }
     
     //MARK: - Requests 
