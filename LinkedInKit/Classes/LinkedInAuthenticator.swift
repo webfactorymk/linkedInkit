@@ -109,11 +109,11 @@ extension LinkedInAuthenticator {
         return UIApplication.sharedApplication().canOpenURL(NSURL(string: "linkedin://")!)
     }
     
-    public static func shouldHandleUrl(url: NSURL) -> Bool {
+    public class func shouldHandleUrl(url: NSURL) -> Bool {
         return isLinkedInAppInstalled && LISDKCallbackHandler.shouldHandleUrl(url)
     }
     
-    public static func application(application: UIApplication,
+    public class func application(application: UIApplication,
                             openURL url: NSURL,
                             sourceApplication: String,
                             annotation: AnyObject) -> Bool {
