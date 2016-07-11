@@ -2,8 +2,8 @@ import Foundation
 
 public class LinkedInSDKResponse: NSObject {
     
-    var statusCode: Int?
-    var jsonObject: [String: AnyObject]?
+    public var statusCode: Int?
+    public var jsonObject: [String: AnyObject]?
     
     public init(withData data: NSData, statusCode: Int) {
         super.init()
