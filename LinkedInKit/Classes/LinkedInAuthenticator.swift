@@ -78,13 +78,13 @@ public class LinkedInAuthenticator: NSObject {
     }
     
     //MARK: - Requests 
-    public func requestUrl(url: NSURL, success: LinkedInRequestSuccessCallback?, failure: LinkedInRequestFailureCallback?) {
+    public func requestUrl(urlString: String, success: LinkedInRequestSuccessCallback?, failure: LinkedInRequestFailureCallback?) {
         
         // **NOTE** Only GET request 
         
         if hasValidAccessToken {
             if LinkedInAuthenticator.isLinkedInAppInstalled {
-                LISDKAPIHelper.sharedInstance().getRequest("",
+                LISDKAPIHelper.sharedInstance().getRequest(urlString,
                                                            success:
                     { (response) in
                         
