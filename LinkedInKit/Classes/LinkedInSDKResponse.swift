@@ -1,11 +1,11 @@
 import Foundation
 
-class LinkedInSDKResponse: NSObject {
+public class LinkedInSDKResponse: NSObject {
     
     var statusCode: Int?
     var jsonObject: [String: AnyObject]?
     
-    init(withData data: NSData, statusCode: Int) {
+    public init(withData data: NSData, statusCode: Int) {
         super.init()
         self.statusCode = statusCode
         

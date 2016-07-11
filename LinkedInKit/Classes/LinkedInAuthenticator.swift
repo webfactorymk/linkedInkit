@@ -2,8 +2,8 @@ import Foundation
 
 public typealias LinkedInAuthSuccessCallback = (token: LinkedInAccessToken?) -> ()
 public typealias LinkedInAuthFailureCallback = (error: NSError?) -> ()
-typealias LinkedInRequestSuccessCallback = (response: LinkedInSDKResponse?) -> ()
-typealias LinkedInRequestFailureCallback = (error: LISDKAPIError?) -> ()
+public typealias LinkedInRequestSuccessCallback = (response: LinkedInSDKResponse?) -> ()
+public typealias LinkedInRequestFailureCallback = (error: LISDKAPIError?) -> ()
 
 public class LinkedInAuthenticator: NSObject {
     
@@ -78,7 +78,7 @@ public class LinkedInAuthenticator: NSObject {
     }
     
     //MARK: - Requests 
-    func requestUrl(url: NSURL, success: LinkedInRequestSuccessCallback?, failure: LinkedInRequestFailureCallback?) {
+    public func requestUrl(url: NSURL, success: LinkedInRequestSuccessCallback?, failure: LinkedInRequestFailureCallback?) {
         
         // **NOTE** Only GET request 
         
@@ -105,15 +105,15 @@ public class LinkedInAuthenticator: NSObject {
 //MARK: - Static methods
 extension LinkedInAuthenticator {
     
-    static var isLinkedInAppInstalled: Bool {
+    public static var isLinkedInAppInstalled: Bool {
         return UIApplication.sharedApplication().canOpenURL(NSURL(string: "linkedin://")!)
     }
     
-    static func shouldHandleUrl(url: NSURL) -> Bool {
+    public static func shouldHandleUrl(url: NSURL) -> Bool {
         return isLinkedInAppInstalled && LISDKCallbackHandler.shouldHandleUrl(url)
     }
     
-    static func application(application: UIApplication,
+    public static func application(application: UIApplication,
                             openURL url: NSURL,
                             sourceApplication: String,
                             annotation: AnyObject) -> Bool {
