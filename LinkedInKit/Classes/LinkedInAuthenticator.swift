@@ -11,7 +11,7 @@ class LinkedInAuthenticator: NSObject {
     
     var httpClient: LinkedInHTTPClient?
     
-    private let linkedInKeychainKey = "wf.linkedInKit.accessToken"
+    private let linkedInKeychainKey = "wf.linkedInKit.accessTokenKey"
     private var storedToken: LinkedInAccessToken?
     
     var accessToken: LinkedInAccessToken? {
