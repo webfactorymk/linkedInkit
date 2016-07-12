@@ -33,12 +33,14 @@ class LinkedInAuthenticator: NSObject {
         if let accessToken = accessToken where accessToken.isSDK == true {
             isConsistent = LinkedInKit.isLinkedInAppInstalled
         }
-
         return accessToken != nil && accessToken?.expireDate > NSDate() && isConsistent
     }
     
     var isAuthorized: Bool {
-        return hasValidAccessToken && LISDKSessionManager.sharedInstance().session.isValid()
+        if let accessToken = accessToken where accessToken.isSDK == true {
+            return hasValidAccessToken && LISDKSessionManager.sharedInstance().session.isValid()
+        }
+        return hasValidAccessToken
     }
     
     // MARK: Authentication
