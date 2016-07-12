@@ -14,6 +14,11 @@ public class LinkedInKit {
         return LinkedInAuthenticator.sharedInstance.accessToken?.isSDK ?? false
     }
     
+    static public var authViewControllerDelegate: LinkedInAuthorizationViewControllerDelegate? {
+        set { LinkedInAuthenticator.sharedInstance.httpClient?.viewControllerDelegate = newValue }
+        get { return LinkedInAuthenticator.sharedInstance.httpClient?.viewControllerDelegate }
+    }
+    
     public class func setup(withConfiguration configuration: LinkedInConfiguration) {
         let httpClient = LinkedInHTTPClient(linkedInConfiguration: configuration)
         
@@ -28,8 +33,8 @@ public class LinkedInKit {
     }
     
     public class func requestUrl(urlString: String,
-                           success: LinkedInRequestSuccessCallback?,
-                           failure: LinkedInRequestFailureCallback?) {
+                                 success: LinkedInRequestSuccessCallback?,
+                                 failure: LinkedInRequestFailureCallback?) {
         
         LinkedInAuthenticator.sharedInstance.requestUrl(urlString,
                                                         success: success,

@@ -7,6 +7,7 @@ public protocol LinkedInAuthorizationViewControllerDelegate: class {
     func linkedInViewControllerNavigationBarColor() -> UIColor?
     func linkedInViewControllerTitleAttributtedString() -> NSAttributedString?
     func linkedInViewControllerCancelAttributtedString() -> NSAttributedString?
+    func linkedInViewControllerLoadingView() -> LinkedInLoadingView?
 }
 
 public extension LinkedInAuthorizationViewControllerDelegate {
@@ -27,6 +28,10 @@ public extension LinkedInAuthorizationViewControllerDelegate {
         
         return attributedTitle
     }
+    
+    func linkedInViewControllerLoadingView() -> LinkedInLoadingView? {
+        return nil
+    }
 }
 
 class LinkedInAuthorizationViewController: UIViewController {
@@ -40,6 +45,7 @@ class LinkedInAuthorizationViewController: UIViewController {
     var isHandlingRedirectURL = false
     
     private let webView = UIWebView()
+    private var loadingView: LinkedInLoadingView?
     
     init(configuration: LinkedInConfiguration,
          successCalback: LinkedInAuthCodeSuccessCallback?,
@@ -122,6 +128,24 @@ class LinkedInAuthorizationViewController: UIViewController {
     func cancelTapped() {
         cancelCalback?()
     }
+
+    func showLoadingView() {
+        if loadingView == nil {
+            loadingView = delegate?.linkedInViewControllerLoadingView()
+            if let loadingView = loadingView {
+                loadingView.frame = view.frame
+                view.addSubview(loadingView)
+            }
+        }
+        
+        loadingView?.hidden = false
+        loadingView?.startAnimating()
+    }
+    
+    func hideLoadingView() {
+        loadingView?.hidden = true
+        loadingView?.startAnimating()
+    }
     
     func clearLinkedInCookies() {
         let storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
@@ -165,16 +189,24 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
             }
         }
         
+        if !isHandlingRedirectURL {
+            showLoadingView()
+        }
+        
         return !isHandlingRedirectURL
     }
     
     func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
+        hideLoadingView()
+        
         if !isHandlingRedirectURL {
             cancelCalback?()
         }
     }
     
     func webViewDidFinishLoad(webView: UIWebView) {
+        hideLoadingView()
+        
         //Test this out on an iPad
         if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
             let js = "var meta = document.createElement('meta'); "

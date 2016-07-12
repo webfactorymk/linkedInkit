@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                   redirectURL: "http://www.macedonia2025.com",
                                                   appID: "4428373")
         LinkedInKit.setup(withConfiguration: configuration)
+        LinkedInKit.authViewControllerDelegate = DesignManager.sharedManager
         
         return true
     }
