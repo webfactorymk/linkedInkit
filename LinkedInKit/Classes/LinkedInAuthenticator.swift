@@ -10,9 +10,26 @@ public class LinkedInAuthenticator: NSObject {
     private let configuration: LinkedInConfiguration
     private let httpClient: LinkedInHTTPClient
     
-    var accessToken: LinkedInAccessToken?
+    private let linkedInKeychainKey = "wf.linkedInKit.accessToken"
+    
+    public var accessToken: LinkedInAccessToken? {
+        set {
+            accessToken = newValue
+            if let accessToken = accessToken {
+                KeychainWrapper.setObject(accessToken, forKey: linkedInKeychainKey)
+            }
+        }
+        get {
+            return accessToken ?? KeychainWrapper.objectForKey(linkedInKeychainKey) as? LinkedInAccessToken
+        }
+    }
+    
     var hasValidAccessToken: Bool {
         return accessToken != nil && accessToken?.expireDate > NSDate()
+    }
+    
+    public var isAuthorized: Bool {
+        return hasValidAccessToken && LISDKSessionManager.sharedInstance().session.isValid()
     }
     
     public init(configuration: LinkedInConfiguration, httpClient: LinkedInHTTPClient) {
@@ -26,7 +43,7 @@ public class LinkedInAuthenticator: NSObject {
                              failure: LinkedInAuthFailureCallback?) {
         
         // Check if previous token is still in memory and is valid
-        if let accessToken = accessToken where accessToken.expireDate > NSDate() {
+        if hasValidAccessToken {
             success?(token: accessToken)
         } else {
             
