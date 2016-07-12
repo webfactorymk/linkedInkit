@@ -16,7 +16,7 @@ public extension LinkedInAuthorizationViewControllerDelegate {
     
     func linkedInViewControllerTitleAttributtedString() -> NSAttributedString? {
         let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
-        let attributedTitle = NSAttributedString(string: "Title", attributes: attributes)
+        let attributedTitle = NSAttributedString(string: "Sign In", attributes: attributes)
         
         return attributedTitle
     }
@@ -84,13 +84,25 @@ class LinkedInAuthorizationViewController: UIViewController {
         navigationController?.navigationBar.barTintColor = navBarColor
         
         let label = UILabel()
-        label.attributedText = delegate?.linkedInViewControllerTitleAttributtedString()
+        if let titleAttrString = delegate?.linkedInViewControllerTitleAttributtedString() {
+            label.attributedText = titleAttrString
+        } else {
+            let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+            label.attributedText = NSAttributedString(string: "Sign In", attributes: attributes)
+        }
         label.sizeToFit()
         navigationItem.titleView = label
         
         let customButton = UIButton()
-        customButton.setAttributedTitle(delegate?.linkedInViewControllerCancelAttributtedString(),
-                                        forState: .Normal)
+        if let cancelAttrString = delegate?.linkedInViewControllerCancelAttributtedString() {
+            customButton.setAttributedTitle(cancelAttrString,
+                                            forState: .Normal)
+        } else {
+            let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+            let attributedTitle = NSAttributedString(string: "Cancel", attributes: attributes)
+            customButton.setAttributedTitle(attributedTitle,
+                                            forState: .Normal)
+        }
         customButton.sizeToFit()
         customButton.addTarget(self,
                                action: #selector(LinkedInAuthorizationViewController.cancelTapped),
