@@ -12,18 +12,20 @@ public class LinkedInAuthenticator: NSObject {
     
     private let linkedInKeychainKey = "wf.linkedInKit.accessToken"
     
+    private var storedToken: LinkedInAccessToken?
+    
     public var accessToken: LinkedInAccessToken? {
         set {
-            accessToken = newValue
+            storedToken = newValue
             if let accessToken = accessToken {
                 KeychainWrapper.setObject(accessToken, forKey: linkedInKeychainKey)
             }
         }
         get {
-            return accessToken ?? KeychainWrapper.objectForKey(linkedInKeychainKey) as? LinkedInAccessToken
+            return storedToken ?? KeychainWrapper.objectForKey(linkedInKeychainKey) as? LinkedInAccessToken
         }
     }
-    
+
     var hasValidAccessToken: Bool {
         return accessToken != nil && accessToken?.expireDate > NSDate()
     }
@@ -85,15 +87,6 @@ public class LinkedInAuthenticator: NSObject {
         }
     }
     
-    private static func tokenFromSDKSession(session: LISDKSession) -> LinkedInAccessToken? {
-        if let session = LISDKSessionManager.sharedInstance().session where session.isValid() {
-            return LinkedInAccessToken(withAccessToken: session.accessToken.accessTokenValue,
-                                       expireDate: session.accessToken.expiration,
-                                       isSDK: true)
-        }
-        return nil
-    }
-    
     //MARK: - Requests 
     public func requestUrl(urlString: String, success: LinkedInRequestSuccessCallback?, failure: LinkedInRequestFailureCallback?) {
         
@@ -116,6 +109,16 @@ public class LinkedInAuthenticator: NSObject {
                 })
             }
         }
+    }
+    
+    //MARK: - Helper methods
+    private static func tokenFromSDKSession(session: LISDKSession) -> LinkedInAccessToken? {
+        if let session = LISDKSessionManager.sharedInstance().session where session.isValid() {
+            return LinkedInAccessToken(withAccessToken: session.accessToken.accessTokenValue,
+                                       expireDate: session.accessToken.expiration,
+                                       isSDK: true)
+        }
+        return nil
     }
 }
 
