@@ -29,7 +29,12 @@ class LinkedInAuthenticator: NSObject {
     }
     
     var hasValidAccessToken: Bool {
-        return accessToken != nil && accessToken?.expireDate > NSDate()
+        var isConsistent = true
+        if let accessToken = accessToken where accessToken.isSDK == true {
+            isConsistent = LinkedInKit.isLinkedInAppInstalled
+        }
+
+        return accessToken != nil && accessToken?.expireDate > NSDate() && isConsistent
     }
     
     var isAuthorized: Bool {
@@ -100,7 +105,7 @@ class LinkedInAuthenticator: NSObject {
         // **NOTE** Only GET request
         
         if hasValidAccessToken {
-            if LinkedInKit.isLinkedInAppInstalled {
+            if LinkedInKit.isTokenFromMobileSDK {
                 LISDKAPIHelper.sharedInstance().getRequest(urlString,
                                                            success:
                     { (response) in
@@ -114,7 +119,11 @@ class LinkedInAuthenticator: NSObject {
                     }, error: { (error) in
                         failure?(error: error)
                 })
+            } else {
+                // TODO: get profile with REST
             }
+        } else {
+            // TODO: handle sign out
         }
     }
     

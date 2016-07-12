@@ -10,6 +10,10 @@ public class LinkedInKit {
         return UIApplication.sharedApplication().canOpenURL(NSURL(string: "linkedin://")!)
     }
     
+    public static var isTokenFromMobileSDK: Bool {
+        return LinkedInAuthenticator.sharedInstance.accessToken?.isSDK ?? false
+    }
+    
     public class func setup(withConfiguration configuration: LinkedInConfiguration) {
         let httpClient = LinkedInHTTPClient(linkedInConfiguration: configuration)
         
