@@ -3,10 +3,30 @@ import UIKit
 typealias LinkedInAuthCodeSuccessCallback = (code: String) -> ()
 typealias LinkedInAuthCodeCancelCallback = () -> ()
 
-protocol LinkedInAuthorizationViewControllerDelegate: class {
-    func linkedInViewControllerNavigationBarColors() -> (background: UIColor?, foreground: UIColor?)
-    func linkedInViewControllerNavigationBarFonts() -> (titleFont: UIFont?, buttonFont: UIFont?)
-    func linkedInViewControllerNavigationBarTitles() -> (mainTitle: String?, buttonTitle: String?)
+public protocol LinkedInAuthorizationViewControllerDelegate: class {
+    func linkedInViewControllerNavigationBarColor() -> UIColor?
+    func linkedInViewControllerTitleAttributtedString() -> NSAttributedString?
+    func linkedInViewControllerCancelAttributtedString() -> NSAttributedString?
+}
+
+public extension LinkedInAuthorizationViewControllerDelegate {
+    func linkedInViewControllerNavigationBarColor() -> UIColor? {
+        return UIColor.whiteColor()
+    }
+    
+    func linkedInViewControllerTitleAttributtedString() -> NSAttributedString? {
+        let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+        let attributedTitle = NSAttributedString(string: "Title", attributes: attributes)
+        
+        return attributedTitle
+    }
+    
+    func linkedInViewControllerCancelAttributtedString() -> NSAttributedString? {
+        let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+        let attributedTitle = NSAttributedString(string: "Cancel", attributes: attributes)
+        
+        return attributedTitle
+    }
 }
 
 class LinkedInAuthorizationViewController: UIViewController {
@@ -41,8 +61,6 @@ class LinkedInAuthorizationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        clearLinkedInCookies()
-        
         setupViews()
     }
     
@@ -62,18 +80,23 @@ class LinkedInAuthorizationViewController: UIViewController {
     }
     
     func setupViews() {
-        let navBarColors = delegate?.linkedInViewControllerNavigationBarColors()
-        let navBarTitles = delegate?.linkedInViewControllerNavigationBarTitles()
-        let navBarFonts = delegate?.linkedInViewControllerNavigationBarFonts()
+        let navBarColor = delegate?.linkedInViewControllerNavigationBarColor()
+        navigationController?.navigationBar.barTintColor = navBarColor
         
-        title = navBarTitles?.mainTitle ?? "Sign In"
-        navigationController?.navigationBar.barTintColor = navBarColors?.background
-        if let titleFont = navBarFonts?.titleFont {
-            navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName: titleFont]
-        }
-        if let titleColor = navBarColors?.foreground {
-            navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: titleColor]
-        }
+        let label = UILabel()
+        label.attributedText = delegate?.linkedInViewControllerTitleAttributtedString()
+        label.sizeToFit()
+        navigationItem.titleView = label
+        
+        let customButton = UIButton()
+        customButton.setAttributedTitle(delegate?.linkedInViewControllerCancelAttributtedString(),
+                                        forState: .Normal)
+        customButton.sizeToFit()
+        customButton.addTarget(self,
+                               action: #selector(LinkedInAuthorizationViewController.cancelTapped),
+                               forControlEvents: .TouchUpInside)
+        let barButtonItem = UIBarButtonItem(customView: customButton)
+        navigationItem.rightBarButtonItems = [barButtonItem]
         
         webView.frame = CGRect(x: 0,
                                y: 0,
@@ -82,17 +105,6 @@ class LinkedInAuthorizationViewController: UIViewController {
         webView.delegate = self
         webView.scalesPageToFit = true
         view.addSubview(webView)
-        
-        let customButton = UIButton()
-        customButton.setTitle(navBarTitles?.buttonTitle ?? "Cancel", forState: .Normal)
-        customButton.setTitleColor(navBarColors?.foreground ?? UIColor.blackColor(), forState: .Normal)
-        customButton.titleLabel?.font = navBarFonts?.buttonFont
-        customButton.addTarget(self,
-                               action: #selector(LinkedInAuthorizationViewController.cancelTapped),
-                               forControlEvents: .TouchUpInside)
-        customButton.sizeToFit()
-        let barButtonItem = UIBarButtonItem(customView: customButton)
-        navigationItem.rightBarButtonItems = [barButtonItem]
     }
     
     func cancelTapped() {

@@ -6,7 +6,7 @@ public class LinkedInHTTPClient: Alamofire.Manager {
     let linkedInConfiguration: LinkedInConfiguration
     var presentingViewController: UIViewController?
     
-    var viewControllerDelegate: LinkedInAuthorizationViewControllerDelegate?
+    public var viewControllerDelegate: LinkedInAuthorizationViewControllerDelegate?
     
     public init(linkedInConfiguration: LinkedInConfiguration, presentingViewController: UIViewController?) {
         self.linkedInConfiguration = linkedInConfiguration

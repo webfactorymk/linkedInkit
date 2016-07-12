@@ -12,6 +12,7 @@ class ViewController: UIViewController {
         
         let configuration = LinkedInConfiguration(withClientID: "77zcp4j2f9sver", clientSecret: "svXOeAMVjqfvyvM7", state: "qwertyuiop", permissions: ["r_basicprofile","r_emailaddress"], redirectURL: "http://www.macedonia2025.com", appID: "4428373")
         let client = LinkedInHTTPClient(linkedInConfiguration: configuration, presentingViewController: self)
+        client.viewControllerDelegate = self
         
         authenticator = LinkedInAuthenticator(configuration: configuration, httpClient: client)
     }
@@ -38,4 +39,3 @@ class ViewController: UIViewController {
         })
     }
 }
-
