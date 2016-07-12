@@ -17,8 +17,8 @@ class LinkedInAuthenticator: NSObject {
     var accessToken: LinkedInAccessToken? {
         set {
             storedToken = newValue
-            if let accessToken = accessToken {
-                KeychainWrapper.setObject(accessToken, forKey: linkedInKeychainKey)
+            if let token = newValue {
+                KeychainWrapper.setObject(token, forKey: linkedInKeychainKey)
             } else {
                 KeychainWrapper.removeObjectForKey(linkedInKeychainKey)
             }
