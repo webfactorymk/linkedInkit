@@ -3,18 +3,9 @@ import LinkedInKit
 
 class ViewController: UIViewController {
     
-    var authenticator: LinkedInAuthenticator?
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupViews()
-        
-        let configuration = LinkedInConfiguration(withClientID: "77zcp4j2f9sver", clientSecret: "svXOeAMVjqfvyvM7", state: "qwertyuiop", permissions: ["r_basicprofile","r_emailaddress"], redirectURL: "http://www.macedonia2025.com", appID: "4428373")
-        let client = LinkedInHTTPClient(linkedInConfiguration: configuration, presentingViewController: self)
-        client.viewControllerDelegate = self
-        
-        authenticator = LinkedInAuthenticator(configuration: configuration, httpClient: client)
     }
 
     func setupViews() {
@@ -32,7 +23,7 @@ class ViewController: UIViewController {
     }
     
     func onSignIn() {
-        authenticator?.authenticate({ (token) in
+        LinkedInKit.authenticate({ (token) in
             
             }, failure: { (error) in
                 

@@ -5,13 +5,11 @@ public class LinkedInHTTPClient: Alamofire.Manager {
     
     let linkedInConfiguration: LinkedInConfiguration
     var presentingViewController: UIViewController?
-    
+
     public var viewControllerDelegate: LinkedInAuthorizationViewControllerDelegate?
     
-    public init(linkedInConfiguration: LinkedInConfiguration, presentingViewController: UIViewController?) {
+    public init(linkedInConfiguration: LinkedInConfiguration) {
         self.linkedInConfiguration = linkedInConfiguration
-        self.presentingViewController = presentingViewController
-        
         super.init(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
     }
     
@@ -61,10 +59,8 @@ public class LinkedInHTTPClient: Alamofire.Manager {
 
     //Helper methods
     func showAuthorizationViewController(viewController: LinkedInAuthorizationViewController) {
-        if presentingViewController == nil {
-            presentingViewController = UIApplication.sharedApplication().keyWindow?.rootViewController
-        }
         
+        presentingViewController = UIApplication.sharedApplication().keyWindow?.rootViewController
         let navigationController = UINavigationController(rootViewController: viewController)
         
         if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
