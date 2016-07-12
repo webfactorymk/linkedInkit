@@ -6,9 +6,9 @@ public class LinkedInAccessToken: NSObject, NSCoding {
     private static let ExpireDateKey = "WF.LinkedIn.expireDateKey"
     private static let IsMobileSDKKey = "WF.LinkedIn.mobileSDKKey"
     
-    var accessToken: String?
-    var expireDate: NSDate?
-    var isSDK: Bool?
+    public var accessToken: String?
+    public var expireDate: NSDate?
+    public var isSDK: Bool?
     
     init(withAccessToken accessToken: String?, expireDate: NSDate?, isSDK: Bool?) {
         super.init()
