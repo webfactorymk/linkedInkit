@@ -11,20 +11,15 @@ class LinkedInAuthenticator: NSObject {
     
     var httpClient: LinkedInHTTPClient?
     
-    private let linkedInKeychainKey = "wf.linkedInKit.accessTokenKey"
     private var storedToken: LinkedInAccessToken?
     
     var accessToken: LinkedInAccessToken? {
         set {
             storedToken = newValue
-            if let token = newValue {
-                KeychainWrapper.setObject(token, forKey: linkedInKeychainKey)
-            } else {
-                KeychainWrapper.removeObjectForKey(linkedInKeychainKey)
-            }
+            NSUserDefaults.saveApiToken(newValue)
         }
         get {
-            return storedToken ?? KeychainWrapper.objectForKey(linkedInKeychainKey) as? LinkedInAccessToken
+            return storedToken ?? NSUserDefaults.getApiToken()
         }
     }
     
