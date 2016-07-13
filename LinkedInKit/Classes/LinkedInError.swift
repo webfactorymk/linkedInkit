@@ -25,6 +25,7 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
     case AppPermissionDenied = "LinkedInKitErrorDomain.AppPermissionDenied"
     case NoInternetConnection = "LinkedInKitErrorDomain.NoInternetConnection"
     case ApprovedLinkedInInstall = "LinkedInKitErrorDomain.ApprovedLinkedInInstall"
+    case Default = "LinkedInKitErrorDomain.Default"
     
     public var description: String {
         switch self {
@@ -62,6 +63,14 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
 }
 
 public class LinkedInError: NSError {
+    
+    public var customDomain: LinkedInErrorDomain {
+        if let tempDomain = LinkedInErrorDomain(rawValue: self.domain) {
+            return tempDomain
+        }
+        
+        return .Default
+    }
     
     class func error(withSDKError error: NSError) -> LinkedInError {
         
