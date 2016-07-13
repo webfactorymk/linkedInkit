@@ -45,6 +45,7 @@ public class LinkedInKit {
         LISDKAPIHelper.sharedInstance().cancelCalls()
         LISDKSessionManager.clearSession()
         LinkedInAuthenticator.sharedInstance.accessToken = nil
+        LinkedInAuthenticator.sharedInstance.clearLinkedInCookies()
     }
     
     public class func openProfile(withUrl url: NSURL) {

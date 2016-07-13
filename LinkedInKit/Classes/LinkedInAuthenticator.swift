@@ -43,6 +43,18 @@ class LinkedInAuthenticator: NSObject {
         return hasValidAccessToken
     }
     
+    func clearLinkedInCookies() {
+        let storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        if let cookies = storage.cookies {
+            for cookie in cookies {
+                if cookie.domain.containsString("linkedin") {
+                    storage.deleteCookie(cookie)
+                }
+            }
+            NSUserDefaults.standardUserDefaults().synchronize()
+        }
+    }
+    
     // MARK: Authentication
     func authenticate(success: LinkedInAuthSuccessCallback?,
                       failure: LinkedInAuthFailureCallback?) {

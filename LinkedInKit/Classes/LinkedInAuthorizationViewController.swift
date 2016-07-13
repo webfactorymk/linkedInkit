@@ -67,8 +67,6 @@ class LinkedInAuthorizationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        clearLinkedInCookies()
-        
         setupViews()
         showLoadingView()
     }
@@ -148,18 +146,6 @@ class LinkedInAuthorizationViewController: UIViewController {
     func hideLoadingView() {
         loadingView?.hidden = true
         loadingView?.startAnimating()
-    }
-    
-    func clearLinkedInCookies() {
-        let storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-        if let cookies = storage.cookies {
-            for cookie in cookies {
-                if cookie.domain.containsString("linkedin") {
-                    storage.deleteCookie(cookie)
-                }
-            }
-            NSUserDefaults.standardUserDefaults().synchronize()
-        }
     }
 }
 
