@@ -37,27 +37,10 @@ class ViewController: UIViewController {
             
             LinkedInKit.requestUrl(linkedInProfileUrl,
                 success: { (response) in
-                    
-                    print("sadfasdf")
-//                    crashlytics_log("response data: \(response?.jsonObject)")
-//                    
-//                    if let json = response?.jsonObject {
-//                        let linkedInUser = CurrentUser(parsedObject: LinkedInParser(parameters: json))
-//                        completion?(success: true, user: linkedInUser, error: nil)
-//                    } else {
-//                        completion?(success: true, user: nil, error: nil)
-//                    }
-                    
+                    print("Success")
+
                 }, failure: { (error) in
-                    print("asdfasd")
-                    
-                    
-//                    if let code = error?.code where LIHTTPErrorCode(rawValue: code) == .Unauthorized {
-//                        UserManager.sharedManager.updateCurrentUser(nil)
-//                    } else if let description = error?.description {
-//                        AlertFactory.showOkAlert(description)
-//                    }
-//                    completion?(success: false, user: nil, error: error)
+                    print("Failure")
             })
             
             }, failure: { (error) in

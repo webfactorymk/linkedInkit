@@ -67,6 +67,8 @@ class LinkedInAuthorizationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        clearLinkedInCookies()
+        
         setupViews()
     }
     
