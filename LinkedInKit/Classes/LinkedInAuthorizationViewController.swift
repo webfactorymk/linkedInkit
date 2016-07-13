@@ -85,6 +85,8 @@ class LinkedInAuthorizationViewController: UIViewController {
         webView.loadRequest(NSURLRequest(URL: NSURL(string: urlString)!,
             cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData,
             timeoutInterval: 15.0))
+        
+        showLoadingView()
     }
     
     func setupViews() {
