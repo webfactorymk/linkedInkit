@@ -4,7 +4,7 @@ extension NSUserDefaults {
     
     private static let linkedInTokenKey = "wf.linkedInKit.accessTokenKey"
     
-    class func saveApiToken(token: LinkedInAccessToken?) {
+    class func lik_saveLinkedInAccessToken(token: LinkedInAccessToken?) {
         if let token = token {
             standardUserDefaults().setObject(NSKeyedArchiver.archivedDataWithRootObject(token),
                                              forKey: linkedInTokenKey)
@@ -14,7 +14,7 @@ extension NSUserDefaults {
         standardUserDefaults().synchronize()
     }
     
-    class func getApiToken() -> LinkedInAccessToken? {
+    class func lik_getLinkedInAccessToken() -> LinkedInAccessToken? {
         if let data = standardUserDefaults().objectForKey(linkedInTokenKey) as? NSData {
             return NSKeyedUnarchiver.unarchiveObjectWithData(data) as? LinkedInAccessToken
         }

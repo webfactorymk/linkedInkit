@@ -16,10 +16,10 @@ class LinkedInAuthenticator: NSObject {
     var accessToken: LinkedInAccessToken? {
         set {
             storedToken = newValue
-            NSUserDefaults.saveApiToken(newValue)
+            NSUserDefaults.lik_saveLinkedInAccessToken(newValue)
         }
         get {
-            return storedToken ?? NSUserDefaults.getApiToken()
+            return storedToken ?? NSUserDefaults.lik_getLinkedInAccessToken()
         }
     }
     
