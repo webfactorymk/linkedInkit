@@ -122,7 +122,24 @@ class LinkedInAuthenticator: NSObject {
                         failure?(error: error)
                 })
             } else {
-                // TODO: get profile with REST
+                let headers = ["Authorization": "Bearer \(accessToken!.accessToken!)"]
+                httpClient?.request(.GET, urlString,
+                    parameters: nil,
+                    encoding: .URL,
+                    headers: headers).validate().responseJSON(completionHandler: { response in
+                        
+                        switch response.result {
+                        case .Success(let JSON):
+                            let sdkResponse = LinkedInSDKResponse()
+                            sdkResponse.jsonObject = JSON as! [String : AnyObject]
+                            sdkResponse.statusCode = 200
+                            
+                            success?(response: sdkResponse)
+                        case .Failure(let error):
+                            print("asdfasd")
+                            failure?(error: LISDKAPIError.errorWithError(error) as! LISDKAPIError)
+                        }
+                    })
             }
         } else {
             // TODO: handle sign out

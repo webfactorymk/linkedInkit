@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                   clientSecret: "svXOeAMVjqfvyvM7",
                                                   state: "qwertyuiop",
                                                   permissions: ["r_basicprofile","r_emailaddress"],
-                                                  redirectURL: "http://www.macedonia2025.com",
+                                                  redirectURL: "http://52.38.222.82:18178/documentation/1.0/summits/home.html",
                                                   appID: "4428373")
         LinkedInKit.setup(withConfiguration: configuration)
         LinkedInKit.authViewControllerDelegate = DesignManager.sharedManager

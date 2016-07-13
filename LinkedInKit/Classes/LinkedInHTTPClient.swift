@@ -56,7 +56,7 @@ public class LinkedInHTTPClient: Alamofire.Manager {
             }
         }
     }
-
+    
     //Helper methods
     func showAuthorizationViewController(viewController: LinkedInAuthorizationViewController) {
         

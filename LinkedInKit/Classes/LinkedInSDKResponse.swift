@@ -17,6 +17,10 @@ public class LinkedInSDKResponse: NSObject {
         } catch { }
     }
     
+    public override init() {
+        super.init()
+    }
+    
     init(withDictionary dictionary: [String: AnyObject]?, statusCode: Int) {
         super.init()
         self.statusCode = statusCode
