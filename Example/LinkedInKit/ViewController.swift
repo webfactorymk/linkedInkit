@@ -53,15 +53,10 @@ class ViewController: UIViewController {
                         print("Success")
                         
                     }, failure: { (error) in
-                        if let error = error {
-                            
-                        }
+                      
                 })
             }) { error in
                 
-                if let error = error {
-                    
-                }
             }
         } else {
             LinkedInKit.logout()
