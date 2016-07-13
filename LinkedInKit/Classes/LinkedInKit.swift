@@ -41,7 +41,7 @@ public class LinkedInKit {
                                                         failure: failure)
     }
     
-    public class func logout() {
+    public class func signOut() {
         LISDKAPIHelper.sharedInstance().cancelCalls()
         LISDKSessionManager.clearSession()
         LinkedInAuthenticator.sharedInstance.accessToken = nil

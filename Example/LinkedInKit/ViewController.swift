@@ -59,7 +59,7 @@ class ViewController: UIViewController {
                 
             }
         } else {
-            LinkedInKit.logout()
+            LinkedInKit.signOut()
             button.setTitle("Sign In", forState: .Normal)
         }
     }
