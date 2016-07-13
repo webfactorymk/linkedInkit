@@ -60,7 +60,7 @@ class LinkedInAuthenticator: NSObject {
                       failure: LinkedInAuthFailureCallback?) {
         
         // Check if previous token is still in memory and is valid
-        if hasValidAccessToken {
+        if isAuthorized {
             success?(token: accessToken)
         } else {
             
