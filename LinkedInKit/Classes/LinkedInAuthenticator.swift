@@ -83,7 +83,7 @@ class LinkedInAuthenticator: NSObject {
                                 self?.accessToken = LinkedInAuthenticator.tokenFromSDKSession(LISDKSessionManager.sharedInstance().session)
                                 success?(token: self?.accessToken)
                             }, errorBlock: { (error) in
-                                failure?(error: error as? LinkedInError)
+                                failure?(error: LinkedInError.error(withSDKError: error))
                         })
                     } else {
                         failure?(error: LinkedInError.error(withErrorDomain: .SetupFailure, customDescription: ""))
@@ -131,7 +131,7 @@ class LinkedInAuthenticator: NSObject {
                         }
                         
                     }, error: { (error) in
-                        failure?(error: error as? LinkedInError)
+                        failure?(error: LinkedInError.error(withSDKError: error))
                 })
             } else {
                 let headers = ["Authorization": "Bearer \(accessToken!.accessToken!)"]
