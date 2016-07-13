@@ -90,6 +90,7 @@ class LinkedInAuthenticator: NSObject {
                         })
                         }, cancelCallback: {
                             //TODO: Send appropirate error
+                            failure?(error: NSError(domain: "", code: 400, userInfo: nil))
                         }, failureCallback: { (error) in
                             failure?(error: error)
                     })
