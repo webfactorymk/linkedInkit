@@ -152,7 +152,6 @@ class LinkedInAuthorizationViewController: UIViewController {
 extension LinkedInAuthorizationViewController: UIWebViewDelegate {
     
     func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        let kLinkedInErrorDomain = "LinkedInError"
         let kLinkedInDeniedByUser = "user_cancelled_login"
         
         let url = request.URL!.absoluteString
@@ -161,10 +160,13 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         if isHandlingRedirectURL {
             if let _ = url.rangeOfString("error") {
                 if let _ = url.rangeOfString(kLinkedInDeniedByUser) {
-                    cancelCalback?()
+                    let error = LinkedInError.error(withErrorDomain: LinkedInErrorDomain.AuthCanceled)
+                    failureCalback?(error: error)
                 } else {
-                    //Send a more descriptive error
-                    failureCalback?(error: NSError(domain: kLinkedInErrorDomain, code: 1, userInfo: nil))
+                    let errorDescription = getParameter(withName: "error", fromURLRequest: request)
+                    let error = LinkedInError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
+                                                    customDescription: errorDescription)
+                    failureCalback?(error: error)
                 }
             } else {
                 if let receivedState = getParameter(withName: "state", fromURLRequest: request),
@@ -172,8 +174,10 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                     where receivedState == configuration.state {
                     successCalback?(code: authorizationCode)
                 } else {
-                    //Send a more descriptive error
-                    failureCalback?(error: NSError(domain: kLinkedInErrorDomain, code: 2, userInfo: nil))
+                    let errorDescription = getParameter(withName: "error", fromURLRequest: request)
+                    let error = LinkedInError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
+                                                    customDescription: "An error occured during the authorization code retrieval process")
+                    failureCalback?(error: error)
                 }
             }
         }

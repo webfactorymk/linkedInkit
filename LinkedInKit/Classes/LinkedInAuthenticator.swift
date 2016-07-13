@@ -1,9 +1,9 @@
 import Foundation
 
 public typealias LinkedInAuthSuccessCallback = (token: LinkedInAccessToken?) -> ()
-public typealias LinkedInAuthFailureCallback = (error: NSError?) -> ()
+public typealias LinkedInAuthFailureCallback = (error: LinkedInError?) -> ()
 public typealias LinkedInRequestSuccessCallback = (response: LinkedInSDKResponse?) -> ()
-public typealias LinkedInRequestFailureCallback = (error: LISDKAPIError?) -> ()
+public typealias LinkedInRequestFailureCallback = (error: LinkedInError?) -> ()
 
 class LinkedInAuthenticator: NSObject {
     
@@ -83,32 +83,31 @@ class LinkedInAuthenticator: NSObject {
                                 self?.accessToken = LinkedInAuthenticator.tokenFromSDKSession(LISDKSessionManager.sharedInstance().session)
                                 success?(token: self?.accessToken)
                             }, errorBlock: { (error) in
-                                failure?(error: error)
+                                failure?(error: error as? LinkedInError)
                         })
                     } else {
-                        //TODO: Define custom error
-                        failure?(error: nil)
+                        failure?(error: LinkedInError.error(withErrorDomain: .SetupFailure, customDescription: ""))
                     }
-                    
                 }
             } else {
                 if let httpClient = httpClient {
+                    
                     httpClient.getAuthorizationCode(withSuccessCalback: { [weak self] (code) in
-                        self?.httpClient?.getAccessToken(forAuthorizationCode: code, success: { [weak self] (token) in
-                            self?.accessToken = token
-                            success?(token: self?.accessToken)
+                        
+                        self?.httpClient?.getAccessToken(forAuthorizationCode: code,
+                            success: { [weak self] (token) in
+                                self?.accessToken = token
+                                success?(token: self?.accessToken)
                             }, failure: { (error) in
                                 failure?(error: error)
                         })
                         }, cancelCallback: {
-                            //TODO: Send appropirate error
-                            failure?(error: NSError(domain: "", code: 400, userInfo: nil))
+                            failure?(error: LinkedInError.error(withErrorDomain: .AuthCanceled, customDescription: ""))
                         }, failureCallback: { (error) in
-                            failure?(error: error)
+                            failure?(error: nil)
                     })
                 } else {
-                    //TODO: Define custom error
-                    failure?(error: nil)
+                    failure?(error: LinkedInError.error(withErrorDomain: .SetupFailure))
                 }
             }
         }
@@ -132,7 +131,7 @@ class LinkedInAuthenticator: NSObject {
                         }
                         
                     }, error: { (error) in
-                        failure?(error: error)
+                        failure?(error: error as? LinkedInError)
                 })
             } else {
                 let headers = ["Authorization": "Bearer \(accessToken!.accessToken!)"]
@@ -149,8 +148,7 @@ class LinkedInAuthenticator: NSObject {
                             
                             success?(response: sdkResponse)
                         case .Failure(let error):
-                            print("asdfasd")
-                            failure?(error: LISDKAPIError.errorWithError(error) as! LISDKAPIError)
+                            failure?(error: error as? LinkedInError)
                         }
                     })
             }

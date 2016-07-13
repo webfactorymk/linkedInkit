@@ -13,11 +13,13 @@ let linkedInProfileUrl = "\(baseUrl):(\(profileInfo),\(pictureParams),\(location
 
 class ViewController: UIViewController {
     
+    var button: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
     }
-
+    
     func setupViews() {
         
         let mainScreen = UIScreen.mainScreen().bounds
@@ -25,26 +27,45 @@ class ViewController: UIViewController {
                            y: (mainScreen.height - 40) / 2,
                            width: 100.0,
                            height: 40.0)
-        let button = UIButton(frame: frame)
-        button.setTitle("Sign In", forState: .Normal)
+        button = UIButton(frame: frame)
+        if !LinkedInKit.isAuthorized {
+            button.setTitle("Sign In", forState: .Normal)
+        } else {
+            
+            button.setTitle("Sign Out", forState: .Normal)
+        }
         button.setTitleColor(UIColor.blueColor(), forState: .Normal)
-        button.addTarget(self, action: #selector(ViewController.onSignIn), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(ViewController.onButton), forControlEvents: .TouchUpInside)
         view.addSubview(button)
     }
     
-    func onSignIn() {
-        LinkedInKit.authenticate({ (token) in
-            
-            LinkedInKit.requestUrl(linkedInProfileUrl,
-                success: { (response) in
-                    print("Success")
-
-                }, failure: { (error) in
-                    print("Failure")
-            })
-            
-            }, failure: { (error) in
-                print(error?.localizedDescription)
-        })
+    func onButton() {
+        if !LinkedInKit.isAuthorized {
+            LinkedInKit.authenticate({ [weak self] (token) in
+                if !LinkedInKit.isAuthorized {
+                    self?.button.setTitle("Sign In", forState: .Normal)
+                } else {
+                    self?.button.setTitle("Sign Out", forState: .Normal)
+                }
+                
+                LinkedInKit.requestUrl(linkedInProfileUrl,
+                    success: { (response) in
+                        print("Success")
+                        
+                    }, failure: { (error) in
+                        if let error = error {
+                            
+                        }
+                })
+            }) { error in
+                
+                if let error = error {
+                    
+                }
+            }
+        } else {
+            LinkedInKit.logout()
+            button.setTitle("Sign In", forState: .Normal)
+        }
     }
 }
