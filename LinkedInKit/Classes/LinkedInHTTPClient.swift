@@ -52,7 +52,7 @@ public class LinkedInHTTPClient: Alamofire.Manager {
                 
                 success(token: token)
             case .Failure(let error):
-                failure(error: error as? LinkedInError)
+                failure(error: error)
             }
         }
     }

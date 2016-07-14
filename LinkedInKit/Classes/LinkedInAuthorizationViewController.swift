@@ -160,11 +160,11 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         if isHandlingRedirectURL {
             if let _ = url.rangeOfString("error") {
                 if let _ = url.rangeOfString(kLinkedInDeniedByUser) {
-                    let error = LinkedInError.error(withErrorDomain: LinkedInErrorDomain.AuthCanceled)
+                    let error = NSError.error(withErrorDomain: LinkedInErrorDomain.AuthCanceled)
                     failureCalback?(error: error)
                 } else {
                     let errorDescription = getParameter(withName: "error", fromURLRequest: request)
-                    let error = LinkedInError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
+                    let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                                     customDescription: errorDescription)
                     failureCalback?(error: error)
                 }
@@ -175,7 +175,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                     successCalback?(code: authorizationCode)
                 } else {
                     let errorDescription = getParameter(withName: "error", fromURLRequest: request)
-                    let error = LinkedInError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
+                    let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                                     customDescription: "An error occured during the authorization code retrieval process")
                     failureCalback?(error: error)
                 }

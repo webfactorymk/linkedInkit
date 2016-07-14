@@ -62,7 +62,7 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
     }
 }
 
-public class LinkedInError: NSError {
+public extension NSError {
     
     public var customDomain: LinkedInErrorDomain {
         if let tempDomain = LinkedInErrorDomain(rawValue: self.domain) {
@@ -72,32 +72,32 @@ public class LinkedInError: NSError {
         return .Default
     }
     
-    class func error(withSDKError error: NSError) -> LinkedInError {
+    class func error(withSDKError error: NSError) -> NSError {
         
         let errorType = LIHTTPErrorCode(value: error.code)
         
         if errorType == .CancelationLinkedIn {
             if let errorInfo = error.userInfo["errorInfo"] as? String {
                 if errorInfo == "USER_CANCELLED" {
-                    return LinkedInError.error(withErrorDomain: .AppPermissionDenied)
+                    return NSError.error(withErrorDomain: .AppPermissionDenied)
                 }
             }
-            return LinkedInError.error(withErrorDomain: .AuthCanceled)
+            return NSError.error(withErrorDomain: .AuthCanceled)
         } else if errorType == .ApprovedLinkedInInstall {
-            return LinkedInError.error(withErrorDomain: .ApprovedLinkedInInstall)
+            return NSError.error(withErrorDomain: .ApprovedLinkedInInstall)
         } else if errorType == .NoInternetConnection {
-            return LinkedInError.error(withErrorDomain: .NoInternetConnection)
+            return NSError.error(withErrorDomain: .NoInternetConnection)
         }
         
-        return error as! LinkedInError
+        return error
     }
     
-    class func error(withErrorDomain errorDomain: LinkedInErrorDomain) -> LinkedInError {
-        return LinkedInError.error(withErrorDomain: errorDomain, customDescription: nil)
+    class func error(withErrorDomain errorDomain: LinkedInErrorDomain) -> NSError {
+        return NSError.error(withErrorDomain: errorDomain, customDescription: nil)
     }
     
-    class func error(withErrorDomain errorDomain: LinkedInErrorDomain, customDescription: String?) -> LinkedInError {
-        return LinkedInError(domain: errorDomain.rawValue ,
+    class func error(withErrorDomain errorDomain: LinkedInErrorDomain, customDescription: String?) -> NSError {
+        return NSError(domain: errorDomain.rawValue ,
                              code: errorDomain.statusCode,
                              userInfo: [NSLocalizedDescriptionKey: customDescription ?? errorDomain.description])
     }
