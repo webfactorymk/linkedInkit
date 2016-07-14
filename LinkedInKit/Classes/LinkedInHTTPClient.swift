@@ -5,7 +5,7 @@ public class LinkedInHTTPClient: Alamofire.Manager {
     
     let linkedInConfiguration: LinkedInConfiguration
     var presentingViewController: UIViewController?
-
+    
     public var viewControllerDelegate: LinkedInAuthorizationViewControllerDelegate?
     
     public init(linkedInConfiguration: LinkedInConfiguration) {
@@ -22,9 +22,9 @@ public class LinkedInHTTPClient: Alamofire.Manager {
             }, cancelCalback: { [weak self] in
                 self?.hideAuthorizationViewController()
                 cancelCallback?()
-            }) { [weak self] (error) in
-                self?.hideAuthorizationViewController()
-                failureCallback?(error: error)
+        }) { [weak self] (error) in
+            self?.hideAuthorizationViewController()
+            failureCallback?(error: error)
         }
         viewController.delegate = viewControllerDelegate
         

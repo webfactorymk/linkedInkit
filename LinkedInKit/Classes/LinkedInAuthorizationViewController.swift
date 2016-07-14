@@ -144,7 +144,7 @@ class LinkedInAuthorizationViewController: UIViewController {
     func cancelTapped() {
         cancelCalback?()
     }
-
+    
     func showLoadingView() {
         if loadingView == nil {
             loadingView = delegate?.linkedInViewControllerLoadingView()
@@ -165,6 +165,25 @@ class LinkedInAuthorizationViewController: UIViewController {
         loadingView?.hidden = true
         loadingView?.startAnimating()
     }
+    
+    func showAlert(withTitle title: String, message: String) {
+        let alertController = UIAlertController(title: title,
+                                                message: message,
+                                                preferredStyle: .Alert)
+        
+        let okAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""),
+                                     style: .Default) { [weak self] (action) in
+                                        self?.cancelCalback?()
+        }
+        alertController.addAction(okAction)
+        
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.presentViewController(alertController,
+                                       animated: true,
+                                       completion: nil)
+        }
+    }
 }
 
 extension LinkedInAuthorizationViewController: UIWebViewDelegate {
@@ -183,7 +202,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                 } else {
                     let errorDescription = getParameter(withName: "error", fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
-                                                    customDescription: errorDescription)
+                                              customDescription: errorDescription)
                     failureCalback?(error: error)
                 }
             } else {
@@ -194,7 +213,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                 } else {
                     let errorDescription = getParameter(withName: "error", fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
-                                                    customDescription: "An error occured during the authorization code retrieval process")
+                                              customDescription: "An error occured during the authorization code retrieval process")
                     failureCalback?(error: error)
                 }
             }
@@ -211,10 +230,19 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         hideLoadingView()
         
         if !isHandlingRedirectURL {
-            cancelCalback?()
+            print(error?.code)
+            if let errorCode = error?.code,
+                networkErrorCode = CFNetworkErrors(rawValue: Int32(errorCode))
+                where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
+                
+                showAlert(withTitle: "Network error", message: error!.localizedDescription)
+                return
+            }
+            
+            failureCalback?(error: error)
         }
     }
-    
+
     func webViewDidFinishLoad(webView: UIWebView) {
         hideLoadingView()
         

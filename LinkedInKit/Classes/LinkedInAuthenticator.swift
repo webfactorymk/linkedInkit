@@ -99,7 +99,7 @@ class LinkedInAuthenticator: NSObject {
                         }, cancelCallback: {
                             failure?(error: NSError.error(withErrorDomain: .AuthCanceled, customDescription: ""))
                         }, failureCallback: { (error) in
-                            failure?(error: nil)
+                            failure?(error: error)
                     })
                 } else {
                     failure?(error: NSError.error(withErrorDomain: .SetupFailure))
