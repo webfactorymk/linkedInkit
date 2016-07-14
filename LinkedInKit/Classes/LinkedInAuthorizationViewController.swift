@@ -149,7 +149,10 @@ class LinkedInAuthorizationViewController: UIViewController {
         if loadingView == nil {
             loadingView = delegate?.linkedInViewControllerLoadingView()
             if let loadingView = loadingView {
-                loadingView.frame = view.frame
+                loadingView.frame = CGRect(x: 0,
+                                           y: 64.0,
+                                           width: view.frame.size.width,
+                                           height: view.frame.size.height)
                 view.addSubview(loadingView)
             }
         }
