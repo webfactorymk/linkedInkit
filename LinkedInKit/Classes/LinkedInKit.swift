@@ -48,11 +48,16 @@ public class LinkedInKit {
         LinkedInAuthenticator.sharedInstance.clearLinkedInCookies()
     }
     
-    public class func openProfile(withUrl url: NSURL) {
+    public class func openProfile(withUrl url: NSURL?) {
+        /* This method will open the profile in the LinkedIn app if it's installed, 
+         otherwise it will open the profile in Safari */
         
+        if let url = url {
+            UIApplication.sharedApplication().openURL(url)
+        } else {
+            print("User profile URL is not valid.")
+        }
     }
-    
-    // TODO: add method for opening profile with linkedIn id
     
     public class func shouldHandleUrl(url: NSURL) -> Bool {
         return isLinkedInAppInstalled && LISDKCallbackHandler.shouldHandleUrl(url)
