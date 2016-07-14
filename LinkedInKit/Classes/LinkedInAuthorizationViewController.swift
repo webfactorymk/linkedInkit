@@ -71,6 +71,12 @@ class LinkedInAuthorizationViewController: UIViewController {
         showLoadingView()
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        webView.endEditing(false)
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -87,8 +93,16 @@ class LinkedInAuthorizationViewController: UIViewController {
     }
     
     func setupViews() {
+        automaticallyAdjustsScrollViewInsets = false
+        
+        navigationController?.navigationBar.translucent =  true
+        navigationController?.navigationBar.setBackgroundImage(UIImage(),
+                                                               forBarMetrics: .Default)
+        navigationController?.navigationBar.backgroundColor = UIColor.clearColor()
+        navigationController?.view.backgroundColor  = UIColor.clearColor()
+        
         let navBarColor = delegate?.linkedInViewControllerNavigationBarColor()
-        navigationController?.navigationBar.barTintColor = navBarColor
+        view.backgroundColor = navBarColor
         
         let label = UILabel()
         if let titleAttrString = delegate?.linkedInViewControllerTitleAttributtedString() {
@@ -118,11 +132,12 @@ class LinkedInAuthorizationViewController: UIViewController {
         navigationItem.rightBarButtonItems = [barButtonItem]
         
         webView.frame = CGRect(x: 0,
-                               y: 0,
+                               y: 64.0,
                                width: UIScreen.mainScreen().bounds.width,
-                               height: UIScreen.mainScreen().bounds.height)
+                               height: UIScreen.mainScreen().bounds.height - 64.0)
         webView.delegate = self
         webView.scalesPageToFit = true
+        webView.backgroundColor = UIColor.whiteColor()
         view.addSubview(webView)
     }
     
