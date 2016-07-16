@@ -22,6 +22,7 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
     case RESTFailure = "LinkedInKitErrorDomain.RESTFailure"
     case SDKFailure = "LinkedInKitErrorDomain.SDKFailure"
     case SetupFailure = "LinkedInKitErrorDomain.SetupFailure"
+    case ParseFailure = "LinkedInKitErrorDomain.ParseFailure"
     case AppPermissionDenied = "LinkedInKitErrorDomain.AppPermissionDenied"
     case NoInternetConnection = "LinkedInKitErrorDomain.NoInternetConnection"
     case ApprovedLinkedInInstall = "LinkedInKitErrorDomain.ApprovedLinkedInInstall"
@@ -50,12 +51,15 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
             return code + 3
         case .SetupFailure:
             return code + 4
-        case .AppPermissionDenied:
+        case .ParseFailure:
             return code + 5
-        case .NoInternetConnection:
+        case .AppPermissionDenied:
             return code + 6
-        case .ApprovedLinkedInInstall:
+        case .NoInternetConnection:
             return code + 7
+        case .ApprovedLinkedInInstall:
+            return code + 8
+        
         default:
             return code
         }

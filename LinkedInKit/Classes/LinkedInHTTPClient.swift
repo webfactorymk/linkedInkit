@@ -40,17 +40,27 @@ public class LinkedInHTTPClient: Alamofire.Manager {
         self.request(.POST, accessTokenURL, parameters: nil, encoding: .URL, headers: nil).validate().responseJSON { response in
             switch response.result {
             case .Success(let JSON):
-                let accessToken = JSON["access_token"] as? String
-                let expiresIn =  Int(JSON["expires_in"] as! String)
-                let expiredDate = NSCalendar.currentCalendar().dateByAddingUnit(NSCalendarUnit.Second,
-                    value: expiresIn!,
-                    toDate: NSDate(),
-                    options: NSCalendarOptions.init(rawValue: 0))
-                let token = LinkedInAccessToken(withAccessToken: accessToken,
-                    expireDate: expiredDate,
-                    isSDK: false)
-                
-                success(token: token)
+                if let json = JSON as? [String: AnyObject] {
+                    if let accessToken = json["access_token"] as? String,
+                        expires = json["expires_in"] as? String,
+                        expiresIn = Int(expires) {
+                        
+                        let expiredDate = NSCalendar.currentCalendar().dateByAddingUnit(NSCalendarUnit.Second,
+                            value: expiresIn,
+                            toDate: NSDate(),
+                            options: NSCalendarOptions.init(rawValue: 0))
+                        
+                        let token = LinkedInAccessToken(withAccessToken: accessToken,
+                            expireDate: expiredDate,
+                            isSDK: false)
+                        
+                        success(token: token)
+                    } else {
+                        failure(error: NSError.error(withErrorDomain: .ParseFailure))
+                    }
+                } else {
+                    failure(error: NSError.error(withErrorDomain: .ParseFailure))
+                }
             case .Failure(let error):
                 failure(error: error)
             }
