@@ -42,18 +42,15 @@ public class LinkedInHTTPClient: Alamofire.Manager {
             case .Success(let JSON):
                 if let json = JSON as? [String: AnyObject] {
                     if let accessToken = json["access_token"] as? String,
-                        expires = json["expires_in"] as? String,
-                        expiresIn = Int(expires) {
+                        expireString = json["expires_in"] as? String,
+                        expireDouble = Double(expireString) {
                         
-                        let expiredDate = NSCalendar.currentCalendar().dateByAddingUnit(NSCalendarUnit.Second,
-                            value: expiresIn,
-                            toDate: NSDate(),
-                            options: NSCalendarOptions.init(rawValue: 0))
+                        let expireDate = NSDate(timeIntervalSinceNow: NSTimeInterval(expireDouble/1000))
                         
                         let token = LinkedInAccessToken(withAccessToken: accessToken,
-                            expireDate: expiredDate,
+                            expireDate: expireDate,
                             isSDK: false)
-                        
+
                         success(token: token)
                     } else {
                         failure(error: NSError.error(withErrorDomain: .ParseFailure))
