@@ -77,23 +77,19 @@ pod 'LinkedInKit', :git => 'http://git.wf.mk/wf-pods/LinkedInKit.git'
 
 ```swift 
     func linkedInViewControllerNavigationBarColor() -> UIColor? {
-        return UIColor.redBackgroundColor()
+        /* return UIColor for customizing the navigation bar */
     }
     
     func linkedInViewControllerTitleAttributtedString() -> NSAttributedString? {
-        return NSAttributedString(string: "Sign In", 
-                                  attributes: [NSForegroundColorAttributeName: UIColor.whiteColor(),
-                                               NSFontAttributeName: UIFont.montserratLightOfSize(16.0)])
+        /* return NSAttributtedString for formating the navigation bar title */
     }
     
     func linkedInViewControllerCancelAttributtedString() -> NSAttributedString? {
-        return attributedTitle = NSAttributedString(string: "Cancel", 
-                                                    attributes: [NSForegroundColorAttributeName: UIColor.whiteColor(),
-                                                                 NSFontAttributeName: UIFont.montserratLightOfSize(14.0)])
+        /* return NSAttributtedString for formating 'Cancel' button label */
     }
     
     func linkedInViewControllerLoadingView() -> LinkedInLoadingView? {
-        return CustomLinkedInLoadingView()
+        /* return a view conforming the LinkedInLoadingView protocol */
     }
 ```
 
