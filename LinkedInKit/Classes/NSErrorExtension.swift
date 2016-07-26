@@ -91,6 +91,9 @@ public extension NSError {
             return NSError.error(withErrorDomain: .ApprovedLinkedInInstall)
         } else if errorType == .NoInternetConnection {
             return NSError.error(withErrorDomain: .NoInternetConnection)
+        } else if let  networkErrorCode = CFNetworkErrors(rawValue: Int32(error.code))
+            where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
+            return NSError.error(withErrorDomain: .NoInternetConnection)
         }
         
         return error
