@@ -49,18 +49,52 @@ pod 'LinkedInKit', :git => 'http://git.wf.mk/wf-pods/LinkedInKit.git'
 ```
 
 ### GET requests
+
 ```swift
-    LinkedInKit.requestUrl(linkedInProfileUrl,
-                       success: { (response) in
+    LinkedInKit.requestUrl(linkedInProfileUrl, success: { (response) in
         print("response data: \(response?.jsonObject)")
     }, failure: { (error) in
         print(error)
     })
 ```
 
+### Opening user profile 
+```swift
+    LinkedInKit.openProfile(withUrl: NSURL(string: "https://www.linkedin.com/in/example123456")) { (success) in
+        print(success)
+    }
+```
+
 ### Customizing Web View appearance 
+
+
 ```swift
     LinkedInKit.authViewControllerDelegate = DesignManager.sharedInstance
+```
+
+#### LinkedInAuthorizationViewControllerDelegate methods
+
+
+```swift 
+    func linkedInViewControllerNavigationBarColor() -> UIColor? {
+        return UIColor.redBackgroundColor()
+    }
+    
+    func linkedInViewControllerTitleAttributtedString() -> NSAttributedString? {
+        return NSAttributedString(string: "Sign In", 
+                                  attributes: [NSForegroundColorAttributeName: UIColor.whiteColor(),
+                                               NSFontAttributeName: UIFont.montserratLightOfSize(16.0)])
+    }
+    
+    func linkedInViewControllerCancelAttributtedString() -> NSAttributedString? {
+        return attributedTitle = NSAttributedString(string: "Cancel", 
+                                                    attributes: [NSForegroundColorAttributeName: UIColor.whiteColor(),
+                                                                 NSFontAttributeName: UIFont.montserratLightOfSize(14.0)])
+    }
+    
+    func linkedInViewControllerLoadingView() -> LinkedInLoadingView? {
+        return CustomLinkedInLoadingView()
+    }
 ```
 
 ## License
