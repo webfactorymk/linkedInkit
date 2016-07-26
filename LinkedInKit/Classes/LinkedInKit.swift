@@ -48,14 +48,15 @@ public class LinkedInKit {
         LinkedInAuthenticator.sharedInstance.clearLinkedInCookies()
     }
     
-    public class func openProfile(withUrl url: NSURL?, failure: (() -> ())?) {
+    public class func openProfile(withUrl url: NSURL?, callback: ((success: Bool) -> ())?) {
         /* This method will open the profile in the LinkedIn app if it's installed, 
          otherwise it will open the profile in Safari */
         
-        if let url = url {
+        if let url = url where UIApplication.sharedApplication().canOpenURL(url) {
             UIApplication.sharedApplication().openURL(url)
+            callback?(success: true)
         } else {
-            failure?()
+            callback?(success: false)
         }
     }
     
