@@ -76,7 +76,7 @@ public extension NSError {
         return .Default
     }
     
-    class func error(withSDKError error: NSError) -> NSError {
+    class func error(withLIError error: NSError) -> NSError {
         
         let errorType = LIHTTPErrorCode(value: error.code)
         
