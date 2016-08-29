@@ -18,12 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        let configuration = LinkedInConfiguration(withClientID: "77zcp4j2f9sver",
-                                                  clientSecret: "svXOeAMVjqfvyvM7",
+        let configuration = LinkedInConfiguration(withClientID: "78mqqrk2mcaied",
+                                                  clientSecret: "4o2gtBTLePRKJi4H",
                                                   state: "qwertyuiop",
-                                                  permissions: ["r_basicprofile","r_emailaddress"],
-                                                  redirectURL: "http://52.38.222.82:18178/documentation/1.0/summits/home.html",
-                                                  appID: "4428373")
+                                                  permissions: ["r_basicprofile","r_emailaddress","rw_company_admin", "w_share"],
+                                                  redirectURL: "http://www.google.com",
+                                                  appID: "4245054")
         LinkedInKit.setup(withConfiguration: configuration)
         LinkedInKit.authViewControllerDelegate = DesignManager.sharedManager
         
