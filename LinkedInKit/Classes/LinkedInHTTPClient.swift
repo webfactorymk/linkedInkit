@@ -42,11 +42,9 @@ public class LinkedInHTTPClient: Alamofire.Manager {
             case .Success(let JSON):
                 if let json = JSON as? [String: AnyObject] {
                     if let accessToken = json["access_token"] as? String,
-                        expireString = json["expires_in"] as? String,
-                        expireDouble = Double(expireString) {
+                        expireTimestamp = json["expires_in"] as? Double {
                         
-                        let expireDate = NSDate(timeIntervalSinceNow: NSTimeInterval(expireDouble/1000))
-                        
+                        let expireDate = NSDate(timeIntervalSinceNow: NSTimeInterval(expireTimestamp/1000))
                         let token = LinkedInAccessToken(withAccessToken: accessToken,
                             expireDate: expireDate,
                             isSDK: false)
