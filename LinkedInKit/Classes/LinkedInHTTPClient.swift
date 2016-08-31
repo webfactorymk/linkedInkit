@@ -13,13 +13,13 @@ public class LinkedInHTTPClient: Alamofire.Manager {
         super.init(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
     }
     
-    func getAuthorizationCode(withSuccessCalback successCallback: LinkedInAuthCodeSuccessCallback?,
+    func getAuthorizationCode(withsuccessCallback successCallback: LinkedInAuthCodeSuccessCallback?,
                                                  cancelCallback: LinkedInAuthCodeCancelCallback?,
                                                  failureCallback: LinkedInAuthFailureCallback?) {
-        let viewController = LinkedInAuthorizationViewController(configuration: linkedInConfiguration, successCalback: { [weak self] (code) in
+        let viewController = LinkedInAuthorizationViewController(configuration: linkedInConfiguration, successCallback: { [weak self] (code) in
             self?.hideAuthorizationViewController()
             successCallback?(code: code)
-            }, cancelCalback: { [weak self] in
+            }, cancelCallback: { [weak self] in
                 self?.hideAuthorizationViewController()
                 cancelCallback?()
         }) { [weak self] (error) in

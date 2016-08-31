@@ -27,7 +27,6 @@ public class LinkedInKit {
     
     public class func authenticate(success: LinkedInAuthSuccessCallback?,
                                    failure: LinkedInAuthFailureCallback?) {
-        
         LinkedInAuthenticator.sharedInstance.authenticate(success,
                                                           failure: failure)
     }

@@ -17,16 +17,12 @@ public extension LinkedInAuthorizationViewControllerDelegate {
     
     func linkedInViewControllerTitleAttributtedString() -> NSAttributedString? {
         let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
-        let attributedTitle = NSAttributedString(string: "Sign In", attributes: attributes)
-        
-        return attributedTitle
+        return NSAttributedString(string: "Sign In", attributes: attributes)
     }
     
     func linkedInViewControllerCancelAttributtedString() -> NSAttributedString? {
         let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
-        let attributedTitle = NSAttributedString(string: "Cancel", attributes: attributes)
-        
-        return attributedTitle
+        return NSAttributedString(string: "Cancel", attributes: attributes)
     }
     
     func linkedInViewControllerLoadingView() -> LinkedInLoadingView? {
@@ -39,8 +35,8 @@ class LinkedInAuthorizationViewController: UIViewController {
     weak var delegate: LinkedInAuthorizationViewControllerDelegate?
     
     let configuration: LinkedInConfiguration
-    let successCalback: LinkedInAuthCodeSuccessCallback?
-    let cancelCalback: LinkedInAuthCodeCancelCallback?
+    let successCallback: LinkedInAuthCodeSuccessCallback?
+    let cancelCallback: LinkedInAuthCodeCancelCallback?
     let failureCalback: LinkedInAuthFailureCallback?
     var isHandlingRedirectURL = false
     
@@ -48,13 +44,13 @@ class LinkedInAuthorizationViewController: UIViewController {
     private var loadingView: LinkedInLoadingView?
     
     init(configuration: LinkedInConfiguration,
-         successCalback: LinkedInAuthCodeSuccessCallback?,
-         cancelCalback: LinkedInAuthCodeCancelCallback?,
+         successCallback: LinkedInAuthCodeSuccessCallback?,
+         cancelCallback: LinkedInAuthCodeCancelCallback?,
          failureCalback: LinkedInAuthFailureCallback?) {
         
         self.configuration = configuration
-        self.successCalback = successCalback
-        self.cancelCalback = cancelCalback
+        self.successCallback = successCallback
+        self.cancelCallback = cancelCallback
         self.failureCalback = failureCalback
         
         super.init(nibName: nil, bundle: nil)
@@ -66,14 +62,12 @@ class LinkedInAuthorizationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupViews()
         showLoadingView()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
         webView.endEditing(false)
     }
     
@@ -96,8 +90,7 @@ class LinkedInAuthorizationViewController: UIViewController {
         automaticallyAdjustsScrollViewInsets = false
         
         navigationController?.navigationBar.translucent =  true
-        navigationController?.navigationBar.setBackgroundImage(UIImage(),
-                                                               forBarMetrics: .Default)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: .Default)
         navigationController?.navigationBar.backgroundColor = UIColor.clearColor()
         navigationController?.view.backgroundColor  = UIColor.clearColor()
         
@@ -142,7 +135,7 @@ class LinkedInAuthorizationViewController: UIViewController {
     }
     
     func cancelTapped() {
-        cancelCalback?()
+        cancelCallback?()
     }
     
     func showLoadingView() {
@@ -170,25 +163,23 @@ class LinkedInAuthorizationViewController: UIViewController {
         let alertController = UIAlertController(title: title,
                                                 message: message,
                                                 preferredStyle: .Alert)
-        
-        let okAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""),
-                                     style: .Default) { [weak self] (action) in
-                                        self?.cancelCalback?()
-        }
-        alertController.addAction(okAction)
-        
+        alertController.addAction(
+            UIAlertAction(title: NSLocalizedString("OK", comment: ""),
+            style: .Default) { [weak self] (action) in
+                self?.cancelCallback?()
+            })
         
         dispatch_async(dispatch_get_main_queue()) {
-            self.presentViewController(alertController,
-                                       animated: true,
-                                       completion: nil)
+            self.presentViewController(alertController, animated: true, completion: nil)
         }
     }
 }
 
 extension LinkedInAuthorizationViewController: UIWebViewDelegate {
     
-    func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+    func webView(webView: UIWebView,
+                 shouldStartLoadWithRequest request: NSURLRequest,
+                                            navigationType: UIWebViewNavigationType) -> Bool {
         let kLinkedInDeniedByUser = "user_cancelled_login"
         
         let url = request.URL!.absoluteString
@@ -209,7 +200,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                 if let receivedState = getParameter(withName: "state", fromURLRequest: request),
                     authorizationCode = getParameter(withName: "code", fromURLRequest: request)
                     where receivedState == configuration.state {
-                    successCalback?(code: authorizationCode)
+                    successCallback?(code: authorizationCode)
                 } else {
                     let errorDescription = getParameter(withName: "error", fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
@@ -222,7 +213,6 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         if !isHandlingRedirectURL {
             showLoadingView()
         }
-        
         return !isHandlingRedirectURL
     }
     
@@ -238,7 +228,6 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                 showAlert(withTitle: "Network error", message: error!.localizedDescription)
                 return
             }
-            
             failureCalback?(error: error)
         }
     }
@@ -265,7 +254,6 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                 return item.value
             }
         }
-        
         return nil
     }
 }

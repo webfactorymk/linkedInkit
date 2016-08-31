@@ -76,7 +76,6 @@ public extension NSError {
         if let tempDomain = LinkedInErrorDomain(rawValue: self.domain) {
             return tempDomain
         }
-        
         return .Default
     }
     

@@ -78,7 +78,7 @@ class LinkedInAuthenticator: NSObject {
     private func authThroughWeb(success: LinkedInAuthSuccessCallback?,
                                 failure: LinkedInAuthFailureCallback?) {
         if let httpClient = LinkedInRequestProvider.sharedProvider.httpClient {
-            httpClient.getAuthorizationCode(withSuccessCalback: { [weak self] (code) in
+            httpClient.getAuthorizationCode(withsuccessCallback: { [weak self] (code) in
                 httpClient.getAccessToken(forAuthorizationCode: code,
                     success: { [weak self] (token) in
                         self?.accessToken = token
