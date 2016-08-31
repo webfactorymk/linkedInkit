@@ -58,13 +58,6 @@ pod 'LinkedInKit', :git => 'http://git.wf.mk/wf-pods/LinkedInKit.git'
     })
 ```
 
-### Opening user profile 
-```swift
-    LinkedInKit.openProfile(withUrl: NSURL(string: "https://www.linkedin.com/in/example123456")) { (success) in
-        print(success)
-    }
-```
-
 ### Customizing Web View appearance 
 
 
