@@ -26,6 +26,7 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
     case AppPermissionDenied = "LinkedInKitErrorDomain.AppPermissionDenied"
     case NoInternetConnection = "LinkedInKitErrorDomain.NoInternetConnection"
     case ApprovedLinkedInInstall = "LinkedInKitErrorDomain.ApprovedLinkedInInstall"
+    case NotAuthenticated = "LinkedInKitErrorDomain.NotAuthenticated"
     case Default = "LinkedInKitErrorDomain.Default"
     
     public var description: String {
@@ -34,6 +35,8 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
             return "The user cancelled the sign in process."
         case .SetupFailure:
             return "The LinkedInKit is not set up properly. Please see the docs for set up instructions."
+        case .NotAuthenticated:
+            return "The user is not signed in"
         default:
             return ""
         }
@@ -59,7 +62,8 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
             return code + 7
         case .ApprovedLinkedInInstall:
             return code + 8
-        
+        case .NotAuthenticated:
+            return code + 9
         default:
             return code
         }

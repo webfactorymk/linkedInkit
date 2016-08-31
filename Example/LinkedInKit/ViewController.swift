@@ -34,7 +34,6 @@ class ViewController: UIViewController {
         if !LinkedInKit.isAuthorized {
             button.setTitle("Sign In", forState: .Normal)
         } else {
-            
             button.setTitle("Sign Out", forState: .Normal)
         }
         

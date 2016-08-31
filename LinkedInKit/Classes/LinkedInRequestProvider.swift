@@ -20,7 +20,7 @@ class LinkedInRequestProvider {
                 restRequest(url, method: method, parameters: parameters, success: success, failure: failure)
             }
         } else {
-            // TODO: handle sign out ??
+            failure?(error: NSError.error(withErrorDomain: LinkedInErrorDomain.NotAuthenticated))
         }
     }
     
