@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (3.4.1)
+  - Alamofire (3.4.2)
   - LinkedInKit (0.1.0):
     - Alamofire
 
@@ -11,7 +11,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  Alamofire: 01a82e2f6c0f860ade35534c8dd88be61bdef40c
+  Alamofire: 6aa33201d20d069e1598891cf928883ff1888c7a
   LinkedInKit: 12b2175bfeb7f9f99b6f5778261a6ecc04786825
 
 PODFILE CHECKSUM: 24181ef6a8ee01782e5e218cd9e7184b4afc0906

@@ -1,4 +1,5 @@
 import Foundation
+import Alamofire
 
 public class LinkedInKit {
     
@@ -7,7 +8,7 @@ public class LinkedInKit {
     }
     
     public static var isLinkedInAppInstalled: Bool {
-        return UIApplication.sharedApplication().canOpenURL(NSURL(string: "linkedin://")!)
+        return UIApplication.sharedApplication().canOpenURL(NSURL(string: Constants.linkedInScheme)!)
     }
     
     public static var isTokenFromMobileSDK: Bool {
@@ -15,30 +16,32 @@ public class LinkedInKit {
     }
     
     static public var authViewControllerDelegate: LinkedInAuthorizationViewControllerDelegate? {
-        set { LinkedInAuthenticator.sharedInstance.httpClient?.viewControllerDelegate = newValue }
-        get { return LinkedInAuthenticator.sharedInstance.httpClient?.viewControllerDelegate }
+        set { LinkedInRequestProvider.sharedProvider.httpClient?.viewControllerDelegate = newValue }
+        get { return LinkedInRequestProvider.sharedProvider.httpClient?.viewControllerDelegate }
     }
     
     public class func setup(withConfiguration configuration: LinkedInConfiguration) {
         let httpClient = LinkedInHTTPClient(linkedInConfiguration: configuration)
-        
-        LinkedInAuthenticator.sharedInstance.httpClient = httpClient
+        LinkedInRequestProvider.sharedProvider.httpClient = httpClient
     }
     
     public class func authenticate(success: LinkedInAuthSuccessCallback?,
                                    failure: LinkedInAuthFailureCallback?) {
-        
         LinkedInAuthenticator.sharedInstance.authenticate(success,
                                                           failure: failure)
     }
     
     public class func requestUrl(urlString: String,
+                                 method: Alamofire.Method,
+                                 parameters: [String: AnyObject]?,
                                  success: LinkedInRequestSuccessCallback?,
                                  failure: LinkedInRequestFailureCallback?) {
         
-        LinkedInAuthenticator.sharedInstance.requestUrl(urlString,
-                                                        success: success,
-                                                        failure: failure)
+        LinkedInRequestProvider.sharedProvider.apiRequestWithUrl(urlString,
+                                                                 method: method,
+                                                                 parameters: parameters,
+                                                                 success: success,
+                                                                 failure: failure)
     }
     
     public class func signOut() {

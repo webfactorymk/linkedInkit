@@ -9,8 +9,6 @@ class LinkedInAuthenticator: NSObject {
     
     static let sharedInstance = LinkedInAuthenticator()
     
-    var httpClient: LinkedInHTTPClient?
-    
     private var storedToken: LinkedInAccessToken?
     
     var accessToken: LinkedInAccessToken? {
@@ -42,7 +40,7 @@ class LinkedInAuthenticator: NSObject {
         let storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         if let cookies = storage.cookies {
             for cookie in cookies {
-                if cookie.domain.containsString("linkedin") {
+                if cookie.domain.containsString(Constants.linkedInDomain) {
                     storage.deleteCookie(cookie)
                 }
             }
@@ -67,49 +65,6 @@ class LinkedInAuthenticator: NSObject {
         }
     }
     
-    //MARK: - Requests
-    func requestUrl(urlString: String, success: LinkedInRequestSuccessCallback?, failure: LinkedInRequestFailureCallback?) {
-        
-        // **NOTE** Only GET request
-        if hasValidAccessToken {
-            if LinkedInKit.isTokenFromMobileSDK {
-                LISDKAPIHelper.sharedInstance().getRequest(urlString,
-                                                           success:
-                    { (response) in
-                        
-                        if let dataFromString = response.data.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
-                            success?(response: LinkedInSDKResponse(withData: dataFromString, statusCode: Int(response.statusCode)))
-                        } else {
-                            success?(response: nil)
-                        }
-                        
-                    }, error: { (error) in
-                        failure?(error: NSError.error(withLIError: error))
-                })
-            } else {
-                let headers = ["Authorization": "Bearer \(accessToken!.accessToken!)"]
-                httpClient?.request(.GET, urlString,
-                    parameters: nil,
-                    encoding: .URL,
-                    headers: headers).validate().responseJSON(completionHandler: { response in
-                        
-                        switch response.result {
-                        case .Success(let JSON):
-                            let sdkResponse = LinkedInSDKResponse()
-                            sdkResponse.jsonObject = JSON as! [String : AnyObject]
-                            sdkResponse.statusCode = 200
-                            
-                            success?(response: sdkResponse)
-                        case .Failure(let error):
-                            failure?(error: NSError.error(withLIError: error))
-                        }
-                    })
-            }
-        } else {
-            // TODO: handle sign out
-        }
-    }
-    
     //MARK: - Helper methods
     private static func tokenFromSDKSession(session: LISDKSession) -> LinkedInAccessToken? {
         if let session = LISDKSessionManager.sharedInstance().session where session.isValid() {
@@ -122,9 +77,9 @@ class LinkedInAuthenticator: NSObject {
     
     private func authThroughWeb(success: LinkedInAuthSuccessCallback?,
                                 failure: LinkedInAuthFailureCallback?) {
-        if let httpClient = httpClient {
-            httpClient.getAuthorizationCode(withSuccessCalback: { [weak self] (code) in
-                self?.httpClient?.getAccessToken(forAuthorizationCode: code,
+        if let httpClient = LinkedInRequestProvider.sharedProvider.httpClient {
+            httpClient.getAuthorizationCode(withsuccessCallback: { [weak self] (code) in
+                httpClient.getAccessToken(forAuthorizationCode: code,
                     success: { [weak self] (token) in
                         self?.accessToken = token
                         success?(token: self?.accessToken)
@@ -157,7 +112,7 @@ class LinkedInAuthenticator: NSObject {
         if session.isValid() && hasValidAccessToken {
             success?(token: accessToken)
         }  else {
-            if let client = httpClient {
+            if let client = LinkedInRequestProvider.sharedProvider.httpClient {
                 LISDKSessionManager.createSessionWithAuth(client.linkedInConfiguration.permissions,
                                                           state: client.linkedInConfiguration.state,
                                                           showGoToAppStoreDialog: false,

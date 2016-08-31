@@ -15,14 +15,12 @@ public class LinkedInConfiguration: NSObject {
                       permissions: [String]?,
                       redirectURL: String,
                       appID: String) {
-        
         self.clientID = clientID
         self.clientSecret = clientSecret
         self.state = state
         self.permissions = permissions
         self.redirectURL = redirectURL
         self.appID = appID
-        
         super.init()
     }
     

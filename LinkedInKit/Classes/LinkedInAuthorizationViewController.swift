@@ -17,16 +17,12 @@ public extension LinkedInAuthorizationViewControllerDelegate {
     
     func linkedInViewControllerTitleAttributtedString() -> NSAttributedString? {
         let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
-        let attributedTitle = NSAttributedString(string: "Sign In", attributes: attributes)
-        
-        return attributedTitle
+        return NSAttributedString(string: "Sign In", attributes: attributes)
     }
     
     func linkedInViewControllerCancelAttributtedString() -> NSAttributedString? {
         let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
-        let attributedTitle = NSAttributedString(string: "Cancel", attributes: attributes)
-        
-        return attributedTitle
+        return NSAttributedString(string: "Cancel", attributes: attributes)
     }
     
     func linkedInViewControllerLoadingView() -> LinkedInLoadingView? {
@@ -39,8 +35,8 @@ class LinkedInAuthorizationViewController: UIViewController {
     weak var delegate: LinkedInAuthorizationViewControllerDelegate?
     
     let configuration: LinkedInConfiguration
-    let successCalback: LinkedInAuthCodeSuccessCallback?
-    let cancelCalback: LinkedInAuthCodeCancelCallback?
+    let successCallback: LinkedInAuthCodeSuccessCallback?
+    let cancelCallback: LinkedInAuthCodeCancelCallback?
     let failureCalback: LinkedInAuthFailureCallback?
     var isHandlingRedirectURL = false
     
@@ -48,13 +44,13 @@ class LinkedInAuthorizationViewController: UIViewController {
     private var loadingView: LinkedInLoadingView?
     
     init(configuration: LinkedInConfiguration,
-         successCalback: LinkedInAuthCodeSuccessCallback?,
-         cancelCalback: LinkedInAuthCodeCancelCallback?,
+         successCallback: LinkedInAuthCodeSuccessCallback?,
+         cancelCallback: LinkedInAuthCodeCancelCallback?,
          failureCalback: LinkedInAuthFailureCallback?) {
         
         self.configuration = configuration
-        self.successCalback = successCalback
-        self.cancelCalback = cancelCalback
+        self.successCallback = successCallback
+        self.cancelCallback = cancelCallback
         self.failureCalback = failureCalback
         
         super.init(nibName: nil, bundle: nil)
@@ -66,14 +62,12 @@ class LinkedInAuthorizationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupViews()
         showLoadingView()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
         webView.endEditing(false)
     }
     
@@ -81,13 +75,9 @@ class LinkedInAuthorizationViewController: UIViewController {
         super.viewDidAppear(animated)
         
         let redirectURL = configuration.redirectURL.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
-        var urlString = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=\(configuration.clientID)&state=\(configuration.state)&redirect_uri=\(redirectURL!)"
-        
-        if let permissions = configuration.formattedPermissions() {
-            urlString.appendContentsOf("&scope=\(permissions)")
-        }
-        
-        webView.loadRequest(NSURLRequest(URL: NSURL(string: urlString)!,
+        var urlString = NSString(format: ApiRoutes.authorizationRoute,configuration.clientID,configuration.state,redirectURL!,configuration.formattedPermissions() ?? "")
+
+        webView.loadRequest(NSURLRequest(URL: NSURL(string: urlString as String)!,
             cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData,
             timeoutInterval: 15.0))
     }
@@ -96,8 +86,7 @@ class LinkedInAuthorizationViewController: UIViewController {
         automaticallyAdjustsScrollViewInsets = false
         
         navigationController?.navigationBar.translucent =  true
-        navigationController?.navigationBar.setBackgroundImage(UIImage(),
-                                                               forBarMetrics: .Default)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: .Default)
         navigationController?.navigationBar.backgroundColor = UIColor.clearColor()
         navigationController?.view.backgroundColor  = UIColor.clearColor()
         
@@ -142,7 +131,7 @@ class LinkedInAuthorizationViewController: UIViewController {
     }
     
     func cancelTapped() {
-        cancelCalback?()
+        cancelCallback?()
     }
     
     func showLoadingView() {
@@ -170,50 +159,50 @@ class LinkedInAuthorizationViewController: UIViewController {
         let alertController = UIAlertController(title: title,
                                                 message: message,
                                                 preferredStyle: .Alert)
-        
-        let okAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""),
-                                     style: .Default) { [weak self] (action) in
-                                        self?.cancelCalback?()
-        }
-        alertController.addAction(okAction)
-        
+        alertController.addAction(
+            UIAlertAction(title: NSLocalizedString("OK", comment: ""),
+            style: .Default) { [weak self] (action) in
+                self?.cancelCallback?()
+            })
         
         dispatch_async(dispatch_get_main_queue()) {
-            self.presentViewController(alertController,
-                                       animated: true,
-                                       completion: nil)
+            self.presentViewController(alertController, animated: true, completion: nil)
         }
     }
 }
 
 extension LinkedInAuthorizationViewController: UIWebViewDelegate {
     
-    func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        let kLinkedInDeniedByUser = "user_cancelled_login"
-        
+    func webView(webView: UIWebView,
+                 shouldStartLoadWithRequest request: NSURLRequest,
+                                            navigationType: UIWebViewNavigationType) -> Bool {
         let url = request.URL!.absoluteString
         isHandlingRedirectURL = url.hasPrefix(configuration.redirectURL)
         
         if isHandlingRedirectURL {
-            if let _ = url.rangeOfString("error") {
-                if let _ = url.rangeOfString(kLinkedInDeniedByUser) {
+            if let _ = url.rangeOfString(Constants.Parameters.error) {
+                if let _ = url.rangeOfString(Constants.ErrorReasons.loginCancelled) {
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.AuthCanceled)
                     failureCalback?(error: error)
                 } else {
-                    let errorDescription = getParameter(withName: "error", fromURLRequest: request)
+                    let errorDescription = getParameter(withName: Constants.Parameters.error,
+                                                        fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                               customDescription: errorDescription)
                     failureCalback?(error: error)
                 }
             } else {
-                if let receivedState = getParameter(withName: "state", fromURLRequest: request),
-                    authorizationCode = getParameter(withName: "code", fromURLRequest: request)
+                if let receivedState = getParameter(withName: Constants.Parameters.state,
+                                                    fromURLRequest: request),
+                    authorizationCode = getParameter(withName: Constants.Parameters.code,
+                                                     fromURLRequest: request)
                     where receivedState == configuration.state {
-                    successCalback?(code: authorizationCode)
+                    successCallback?(code: authorizationCode)
                 } else {
-                    let errorDescription = getParameter(withName: "error", fromURLRequest: request)
+                    let errorDescription = getParameter(withName: Constants.Parameters.error,
+                                                        fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
-                                              customDescription: "An error occured during the authorization code retrieval process")
+                                              customDescription: CustomErrorDescription.authFailureError)
                     failureCalback?(error: error)
                 }
             }
@@ -222,7 +211,6 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         if !isHandlingRedirectURL {
             showLoadingView()
         }
-        
         return !isHandlingRedirectURL
     }
     
@@ -234,11 +222,10 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
             if let errorCode = error?.code,
                 networkErrorCode = CFNetworkErrors(rawValue: Int32(errorCode))
                 where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
-                
-                showAlert(withTitle: "Network error", message: error!.localizedDescription)
+                showAlert(withTitle: NSLocalizedString("Network error", comment: ""),
+                          message: error!.localizedDescription)
                 return
             }
-            
             failureCalback?(error: error)
         }
     }
@@ -248,12 +235,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         
         //Test this out on an iPad
         if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
-            let js = "var meta = document.createElement('meta'); "
-            "meta.setAttribute( 'name', 'viewport' ); "
-            "meta.setAttribute( 'content', 'width = 540px, initial-scale = 1.0, user-scalable = yes' ); "
-            "document.getElementsByTagName('head')[0].appendChild(meta)"
-            
-            webView.stringByEvaluatingJavaScriptFromString(js)
+            webView.stringByEvaluatingJavaScriptFromString(iPadWebjs)
         }
     }
     
@@ -265,7 +247,6 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                 return item.value
             }
         }
-        
         return nil
     }
 }

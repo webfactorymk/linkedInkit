@@ -26,14 +26,17 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
     case AppPermissionDenied = "LinkedInKitErrorDomain.AppPermissionDenied"
     case NoInternetConnection = "LinkedInKitErrorDomain.NoInternetConnection"
     case ApprovedLinkedInInstall = "LinkedInKitErrorDomain.ApprovedLinkedInInstall"
+    case NotAuthenticated = "LinkedInKitErrorDomain.NotAuthenticated"
     case Default = "LinkedInKitErrorDomain.Default"
     
     public var description: String {
         switch self {
         case .AuthCanceled:
-            return "The user cancelled the sign in process."
+            return CustomErrorDescription.authCancelledError
         case .SetupFailure:
-            return "The LinkedInKit is not set up properly. Please see the docs for set up instructions."
+            return CustomErrorDescription.kitSetupFailureError
+        case .NotAuthenticated:
+            return CustomErrorDescription.notSignedInError
         default:
             return ""
         }
@@ -59,7 +62,8 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
             return code + 7
         case .ApprovedLinkedInInstall:
             return code + 8
-        
+        case .NotAuthenticated:
+            return code + 9
         default:
             return code
         }
@@ -72,7 +76,6 @@ public extension NSError {
         if let tempDomain = LinkedInErrorDomain(rawValue: self.domain) {
             return tempDomain
         }
-        
         return .Default
     }
     
@@ -81,8 +84,8 @@ public extension NSError {
         let errorType = LIHTTPErrorCode(value: error.code)
         
         if errorType == .CancelationLinkedIn {
-            if let errorInfo = error.userInfo["errorInfo"] as? String {
-                if errorInfo == "USER_CANCELLED" {
+            if let errorInfo = error.userInfo[Constants.Parameters.errorInfo] as? String {
+                if errorInfo == Constants.ErrorReasons.userCancelled {
                     return NSError.error(withErrorDomain: .AppPermissionDenied)
                 }
             }
@@ -95,7 +98,6 @@ public extension NSError {
             where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
             return NSError.error(withErrorDomain: .NoInternetConnection)
         }
-        
         return error
     }
     
