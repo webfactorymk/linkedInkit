@@ -50,19 +50,7 @@ public class LinkedInKit {
         LinkedInAuthenticator.sharedInstance.accessToken = nil
         LinkedInAuthenticator.sharedInstance.clearLinkedInCookies()
     }
-    
-    public class func openProfile(withUrl url: NSURL?, callback: ((success: Bool) -> ())?) {
-        /* This method will open the profile in the LinkedIn app if it's installed, 
-         otherwise it will open the profile in Safari */
-        
-        if let url = url where UIApplication.sharedApplication().canOpenURL(url) {
-            UIApplication.sharedApplication().openURL(url)
-            callback?(success: true)
-        } else {
-            callback?(success: false)
-        }
-    }
-    
+       
     public class func shouldHandleUrl(url: NSURL) -> Bool {
         return isLinkedInAppInstalled && LISDKCallbackHandler.shouldHandleUrl(url)
     }
