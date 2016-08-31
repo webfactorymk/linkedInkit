@@ -77,7 +77,9 @@ class LinkedInRequestProvider {
                              success: LinkedInRequestSuccessCallback?,
                              failure: LinkedInRequestFailureCallback?) {
         let token = LinkedInAuthenticator.sharedInstance.accessToken!.accessToken!
-        let headers = ["Authorization": "Bearer \(token)", "x-li-format": "json", "Content-Type": "application/json"]
+        let headers = [Constants.HttpHeaderKeys.authorization: NSString(format: Constants.HttpHeaderValues.authorization, token) as String,
+                       Constants.HttpHeaderKeys.format: Constants.HttpHeaderValues.format,
+                       Constants.HttpHeaderKeys.contentType: Constants.HttpHeaderValues.contentType]
         let encoding = (method == .GET) ? Alamofire.ParameterEncoding.URL : Alamofire.ParameterEncoding.JSON
         
         let request = httpClient?.request(

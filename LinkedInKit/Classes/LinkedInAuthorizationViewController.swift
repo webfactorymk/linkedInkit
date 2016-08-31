@@ -75,13 +75,9 @@ class LinkedInAuthorizationViewController: UIViewController {
         super.viewDidAppear(animated)
         
         let redirectURL = configuration.redirectURL.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
-        var urlString = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=\(configuration.clientID)&state=\(configuration.state)&redirect_uri=\(redirectURL!)"
-        
-        if let permissions = configuration.formattedPermissions() {
-            urlString.appendContentsOf("&scope=\(permissions)")
-        }
-        
-        webView.loadRequest(NSURLRequest(URL: NSURL(string: urlString)!,
+        var urlString = NSString(format: ApiRoutes.authorizationRoute,configuration.clientID,configuration.state,redirectURL!,configuration.formattedPermissions() ?? "")
+
+        webView.loadRequest(NSURLRequest(URL: NSURL(string: urlString as String)!,
             cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData,
             timeoutInterval: 15.0))
     }
@@ -180,31 +176,33 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
     func webView(webView: UIWebView,
                  shouldStartLoadWithRequest request: NSURLRequest,
                                             navigationType: UIWebViewNavigationType) -> Bool {
-        let kLinkedInDeniedByUser = "user_cancelled_login"
-        
         let url = request.URL!.absoluteString
         isHandlingRedirectURL = url.hasPrefix(configuration.redirectURL)
         
         if isHandlingRedirectURL {
-            if let _ = url.rangeOfString("error") {
-                if let _ = url.rangeOfString(kLinkedInDeniedByUser) {
+            if let _ = url.rangeOfString(Constants.Parameters.error) {
+                if let _ = url.rangeOfString(Constants.ErrorReasons.loginCancelled) {
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.AuthCanceled)
                     failureCalback?(error: error)
                 } else {
-                    let errorDescription = getParameter(withName: "error", fromURLRequest: request)
+                    let errorDescription = getParameter(withName: Constants.Parameters.error,
+                                                        fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                               customDescription: errorDescription)
                     failureCalback?(error: error)
                 }
             } else {
-                if let receivedState = getParameter(withName: "state", fromURLRequest: request),
-                    authorizationCode = getParameter(withName: "code", fromURLRequest: request)
+                if let receivedState = getParameter(withName: Constants.Parameters.state,
+                                                    fromURLRequest: request),
+                    authorizationCode = getParameter(withName: Constants.Parameters.code,
+                                                     fromURLRequest: request)
                     where receivedState == configuration.state {
                     successCallback?(code: authorizationCode)
                 } else {
-                    let errorDescription = getParameter(withName: "error", fromURLRequest: request)
+                    let errorDescription = getParameter(withName: Constants.Parameters.error,
+                                                        fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
-                                              customDescription: "An error occured during the authorization code retrieval process")
+                                              customDescription: CustomErrorDescription.authFailureError)
                     failureCalback?(error: error)
                 }
             }
@@ -224,8 +222,8 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
             if let errorCode = error?.code,
                 networkErrorCode = CFNetworkErrors(rawValue: Int32(errorCode))
                 where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
-                
-                showAlert(withTitle: "Network error", message: error!.localizedDescription)
+                showAlert(withTitle: NSLocalizedString("Network error", comment: ""),
+                          message: error!.localizedDescription)
                 return
             }
             failureCalback?(error: error)
@@ -237,12 +235,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         
         //Test this out on an iPad
         if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
-            let js = "var meta = document.createElement('meta'); "
-            "meta.setAttribute( 'name', 'viewport' ); "
-            "meta.setAttribute( 'content', 'width = 540px, initial-scale = 1.0, user-scalable = yes' ); "
-            "document.getElementsByTagName('head')[0].appendChild(meta)"
-            
-            webView.stringByEvaluatingJavaScriptFromString(js)
+            webView.stringByEvaluatingJavaScriptFromString(iPadWebjs)
         }
     }
     

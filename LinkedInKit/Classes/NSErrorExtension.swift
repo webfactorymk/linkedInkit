@@ -32,11 +32,11 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
     public var description: String {
         switch self {
         case .AuthCanceled:
-            return "The user cancelled the sign in process."
+            return CustomErrorDescription.authCancelledError
         case .SetupFailure:
-            return "The LinkedInKit is not set up properly. Please see the docs for set up instructions."
+            return CustomErrorDescription.kitSetupFailureError
         case .NotAuthenticated:
-            return "The user is not signed in"
+            return CustomErrorDescription.notSignedInError
         default:
             return ""
         }
@@ -84,8 +84,8 @@ public extension NSError {
         let errorType = LIHTTPErrorCode(value: error.code)
         
         if errorType == .CancelationLinkedIn {
-            if let errorInfo = error.userInfo["errorInfo"] as? String {
-                if errorInfo == "USER_CANCELLED" {
+            if let errorInfo = error.userInfo[Constants.Parameters.errorInfo] as? String {
+                if errorInfo == Constants.ErrorReasons.userCancelled {
                     return NSError.error(withErrorDomain: .AppPermissionDenied)
                 }
             }
@@ -98,7 +98,6 @@ public extension NSError {
             where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
             return NSError.error(withErrorDomain: .NoInternetConnection)
         }
-        
         return error
     }
     

@@ -8,7 +8,7 @@ public class LinkedInKit {
     }
     
     public static var isLinkedInAppInstalled: Bool {
-        return UIApplication.sharedApplication().canOpenURL(NSURL(string: "linkedin://")!)
+        return UIApplication.sharedApplication().canOpenURL(NSURL(string: Constants.linkedInScheme)!)
     }
     
     public static var isTokenFromMobileSDK: Bool {

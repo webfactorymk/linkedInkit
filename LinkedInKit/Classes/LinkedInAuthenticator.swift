@@ -40,7 +40,7 @@ class LinkedInAuthenticator: NSObject {
         let storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         if let cookies = storage.cookies {
             for cookie in cookies {
-                if cookie.domain.containsString("linkedin") {
+                if cookie.domain.containsString(Constants.linkedInDomain) {
                     storage.deleteCookie(cookie)
                 }
             }

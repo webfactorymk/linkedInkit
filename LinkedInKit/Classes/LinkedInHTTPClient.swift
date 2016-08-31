@@ -34,15 +34,15 @@ public class LinkedInHTTPClient: Alamofire.Manager {
     func getAccessToken(forAuthorizationCode code: String,
                                              success: LinkedInAuthSuccessCallback,
                                              failure: LinkedInAuthFailureCallback) {
-        let redrectURL = linkedInConfiguration.redirectURL.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())!
-        let accessTokenURL = "http://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code=\(code)&redirect_uri=\(redrectURL)&client_id=\(linkedInConfiguration.clientID)&client_secret=\(linkedInConfiguration.clientSecret)"
+        let redirectURL = linkedInConfiguration.redirectURL.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())!
+        let accessTokenURL = NSString(format: ApiRoutes.accessTokenRoute, code, redirectURL, linkedInConfiguration.clientID, linkedInConfiguration.clientSecret)
         
-        self.request(.POST, accessTokenURL, parameters: nil, encoding: .URL, headers: nil).validate().responseJSON { response in
+        self.request(.POST, accessTokenURL as String, parameters: nil, encoding: .URL, headers: nil).validate().responseJSON { response in
             switch response.result {
             case .Success(let JSON):
                 if let json = JSON as? [String: AnyObject] {
-                    if let accessToken = json["access_token"] as? String,
-                        expireTimestamp = json["expires_in"] as? Double {
+                    if let accessToken = json[Constants.Parameters.accessToken] as? String,
+                        expireTimestamp = json[Constants.Parameters.expiresIn] as? Double {
                         
                         let expireDate = NSDate(timeIntervalSinceNow: NSTimeInterval(expireTimestamp/1000))
                         let token = LinkedInAccessToken(withAccessToken: accessToken,
@@ -64,14 +64,12 @@ public class LinkedInHTTPClient: Alamofire.Manager {
     
     //Helper methods
     func showAuthorizationViewController(viewController: LinkedInAuthorizationViewController) {
-        
         presentingViewController = UIApplication.sharedApplication().keyWindow?.rootViewController
         let navigationController = UINavigationController(rootViewController: viewController)
         
         if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
             navigationController.modalPresentationStyle = UIModalPresentationStyle.FormSheet
         }
-        
         presentingViewController?.presentViewController(navigationController, animated: true, completion: nil)
     }
     
