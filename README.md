@@ -5,8 +5,10 @@
 [![License](https://img.shields.io/cocoapods/l/LinkedInKit.svg?style=flat)](http://cocoapods.org/pods/LinkedInKit)
 [![Platform](https://img.shields.io/cocoapods/p/LinkedInKit.svg?style=flat)](http://cocoapods.org/pods/LinkedInKit)
 
+A simple wrapper for linkedIn-sdk & linkedIn REST Api written in Swift.
+Based on https://github.com/tonyli508/LinkedinSwift
 
-A simple wrapper for linkedIn-sdk & linkedIn REST Api written in Swift
+**Using LinkedIn SDK 1.0.7**
 
 
 ## Example
@@ -48,14 +50,17 @@ pod 'LinkedInKit', :git => 'http://git.wf.mk/wf-pods/LinkedInKit.git'
     }
 ```
 
-### GET requests
+### API requests
 
 ```swift
-    LinkedInKit.requestUrl(linkedInProfileUrl, success: { (response) in
-        print("response data: \(response?.jsonObject)")
-    }, failure: { (error) in
-        print(error)
-    })
+    LinkedInKit.requestUrl("https://api.linkedin.com/v1/people/~/shares?format=json",
+                            method: .POST,
+                            parameters: parameters,
+                            success: { (response) in
+                                print("response data: \(response?.jsonObject)")
+                         }, failure: { (error) in
+                                print(error)
+        })
 ```
 
 ### Customizing Web View appearance 
