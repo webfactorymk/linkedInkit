@@ -44,6 +44,14 @@ public class LinkedInKit {
                                                                  failure: failure)
     }
     
+    public class func openProfileWithMemberId(id: String,
+                                              success: ((success: Bool) -> ())?,
+                                              failure: ((error: NSError) -> ())?) {
+        LinkedInDeeplinkHandler.openProfileWithMemberId(id,
+                                                        success: success,
+                                                        failure: failure)
+    }
+    
     public class func signOut() {
         LISDKAPIHelper.sharedInstance().cancelCalls()
         LISDKSessionManager.clearSession()
