@@ -2,8 +2,8 @@ import Foundation
 
 public typealias LinkedInAuthSuccessCallback = (token: LinkedInAccessToken?) -> ()
 public typealias LinkedInAuthFailureCallback = (error: NSError?) -> ()
-public typealias LinkedInRequestSuccessCallback = (response: LinkedInSDKResponse?) -> ()
-public typealias LinkedInRequestFailureCallback = (error: NSError?) -> ()
+//public typealias LinkedInRequestSuccessCallback = (response: LinkedInSDKResponse?) -> ()
+//public typealias LinkedInRequestFailureCallback = (error: NSError?) -> ()
 
 class LinkedInAuthenticator: NSObject {
     
@@ -66,7 +66,7 @@ class LinkedInAuthenticator: NSObject {
     }
     
     //MARK: - Helper methods
-    private static func tokenFromSDKSession(session: LISDKSession) -> LinkedInAccessToken? {
+    static func tokenFromSDKSession(session: LISDKSession) -> LinkedInAccessToken? {
         if let session = LISDKSessionManager.sharedInstance().session where session.isValid() {
             return LinkedInAccessToken(withAccessToken: session.accessToken.accessTokenValue,
                                        expireDate: session.accessToken.expiration,
