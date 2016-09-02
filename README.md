@@ -29,6 +29,9 @@ pod 'LinkedInKit', :git => 'http://git.wf.mk/wf-pods/LinkedInKit.git'
 
 ## Usage
 
+For project setup please see [Getting Started with the Mobile SDK for iOS](https://developer.linkedin.com/docs/ios-sdk) and [Getting started with the REST API
+](https://developer.linkedin.com/docs/rest-api). LinkedIn sdk is already imported.
+
 ### Setup
 ```swift
     LinkedInKit.setup(withConfiguration: LinkedInConfiguration(withClientID: "your_client_id",
@@ -50,7 +53,17 @@ pod 'LinkedInKit', :git => 'http://git.wf.mk/wf-pods/LinkedInKit.git'
     }
 ```
 
+
 ### API requests
+
+```swift
+    LinkedInKit.openProfileWithMemberId("member_id", success: { (success) in
+                    print(success)
+                }) { (error) in
+                    print(error)
+        }
+```
+
 
 ```swift
     LinkedInKit.requestUrl("https://api.linkedin.com/v1/people/~/shares?format=json",
