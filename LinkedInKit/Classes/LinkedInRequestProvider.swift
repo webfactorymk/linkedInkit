@@ -91,9 +91,17 @@ class LinkedInRequestProvider {
                 switch response.result {
                 case .Success(let JSON):
                     let sdkResponse = LinkedInSDKResponse()
-                    sdkResponse.jsonObject = JSON as! [String : AnyObject]
-                    sdkResponse.statusCode = 200
                     
+                    if let keyValueJsonResponse = JSON as? [String: AnyObject] {
+                        sdkResponse.jsonObject = keyValueJsonResponse
+                    } else {
+                        // Since LinkedIn does not have consistent API responses 
+                        // in key-value format
+                        // ex. https://api.linkedin.com/v1/companies/123456/num-followers?format=json
+                        sdkResponse.jsonObject = [Constants.Parameters.response: JSON]
+                    }
+                    
+                    sdkResponse.statusCode = 200
                     success?(response: sdkResponse)
                 case .Failure(let error):
                     failure?(error: NSError.error(withLIError: error))
