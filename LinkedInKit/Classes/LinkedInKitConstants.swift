@@ -15,6 +15,8 @@ struct Constants {
         
         static let profileUrl = "siteStandardProfileRequest"
         static let url = "url"
+        
+        static let response = "response"
     }
     
     struct HttpHeaderKeys {
