@@ -4,7 +4,7 @@ import Alamofire
 public class LinkedInKit {
     
     public static var isAuthorized: Bool {
-        return LinkedInAuthenticator.sharedInstance.isAuthorized
+        return LinkedInTokenManager.sharedManager.isAuthorized
     }
     
     public static var isLinkedInAppInstalled: Bool {
@@ -12,12 +12,10 @@ public class LinkedInKit {
     }
     
     public static var isTokenFromMobileSDK: Bool {
-        return LinkedInAuthenticator.sharedInstance.accessToken?.isSDK ?? false
+        return LinkedInTokenManager.sharedManager.accessToken?.isSDK ?? false
     }
     
     static public var authViewControllerDelegate: LinkedInAuthorizationViewControllerDelegate? {
-//        set { LinkedInRequestProvider.sharedProvider.httpClient?.viewControllerDelegate = newValue }
-//        get { return LinkedInRequestProvider.sharedProvider.httpClient?.viewControllerDelegate }
         set { LinkedInWebProvider.sharedProvider.httpClient?.viewControllerDelegate = newValue }
         get { return LinkedInWebProvider.sharedProvider.httpClient?.viewControllerDelegate }
 
@@ -27,15 +25,11 @@ public class LinkedInKit {
         LinkedInSdkProvider.sharedProvider.linkedInConfiguration = configuration
         LinkedInWebProvider.sharedProvider.httpClient =
             LinkedInHTTPClient(linkedInConfiguration: configuration)
-//        let httpClient = LinkedInHTTPClient(linkedInConfiguration: configuration)
-//        LinkedInRequestProvider.sharedProvider.httpClient = httpClient
     }
     
     public class func authenticate(success: LinkedInAuthSuccessCallback?,
                                    failure: LinkedInAuthFailureCallback?) {
         linkedInProvider().signIn(success, failure: failure)
-//        LinkedInAuthenticator.sharedInstance.authenticate(success,
-//                                                          failure: failure)
     }
     
     public class func requestUrl(urlString: String,
@@ -48,28 +42,16 @@ public class LinkedInKit {
                                       parameters: parameters,
                                       success: success,
                                       failure: failure)
-//        LinkedInRequestProvider.sharedProvider.apiRequestWithUrl(urlString,
-//                                                                 method: method,
-//                                                                 parameters: parameters,
-//                                                                 success: success,
-//                                                                 failure: failure)
     }
     
     public class func openProfileWithMemberId(id: String,
                                               success: ((success: Bool) -> ())?,
                                               failure: ((error: NSError) -> ())?) {
         linkedInProvider().openProfileWithMemberId(id, success: success, failure: failure)
-//        LinkedInDeeplinkHandler.openProfileWithMemberId(id,
-//                                                        success: success,
-//                                                        failure: failure)
     }
     
     public class func signOut() {
         linkedInProvider().signOut()
-//        LISDKAPIHelper.sharedInstance().cancelCalls()
-//        LISDKSessionManager.clearSession()
-//        LinkedInAuthenticator.sharedInstance.accessToken = nil
-//        LinkedInAuthenticator.sharedInstance.clearLinkedInCookies()
     }
        
     public class func shouldHandleUrl(url: NSURL) -> Bool {
@@ -87,7 +69,7 @@ public class LinkedInKit {
     }
     
     class func linkedInProvider() -> LinkedInProvider {
-        if isAuthorized && isTokenFromMobileSDK {
+        if isLinkedInAppInstalled {
             return LinkedInSdkProvider.sharedProvider
         }
         return LinkedInWebProvider.sharedProvider

@@ -38,7 +38,7 @@ class ViewController: UIViewController {
         }
         
         button.setTitleColor(UIColor.blueColor(), forState: .Normal)
-        button.addTarget(self, action: #selector(ViewController.onButton), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(ViewController.onButton),  forControlEvents: .TouchUpInside)
         
         shareButton.setTitle("Share", forState: .Normal)
         shareButton.setTitleColor(UIColor.blueColor(), forState: .Normal)
