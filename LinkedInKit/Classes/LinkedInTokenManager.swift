@@ -11,7 +11,9 @@ class LinkedInTokenManager {
             NSUserDefaults.lik_saveLinkedInAccessToken(newValue)
         }
         get {
-            return storedToken ?? NSUserDefaults.lik_getLinkedInAccessToken()
+            if let _ = storedToken { return storedToken }
+            storedToken = NSUserDefaults.lik_getLinkedInAccessToken()
+            return storedToken
         }
     }
     
