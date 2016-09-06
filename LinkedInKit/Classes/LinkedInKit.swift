@@ -29,7 +29,11 @@ public class LinkedInKit {
     
     public class func authenticate(success: LinkedInAuthSuccessCallback?,
                                    failure: LinkedInAuthFailureCallback?) {
-        linkedInProvider().signIn(success, failure: failure)
+        if LinkedInTokenManager.sharedManager.isAuthorized {
+            success?(token: LinkedInTokenManager.sharedManager.accessToken)
+        } else {
+            linkedInProvider().signIn(success, failure: failure)
+        }
     }
     
     public class func requestUrl(urlString: String,

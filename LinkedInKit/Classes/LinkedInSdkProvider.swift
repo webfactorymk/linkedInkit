@@ -7,28 +7,21 @@ class LinkedInSdkProvider: LinkedInProvider {
     var linkedInConfiguration: LinkedInConfiguration?
     
     func signIn(success: LinkedInAuthSuccessCallback?,
-                failure: LinkedInAuthFailureCallback?) {
-        let session = LISDKSessionManager.sharedInstance().session
-        let accessToken = tokenFromSDKSession(session)
-        
-        if session.isValid() && LinkedInTokenManager.sharedManager.hasValidAccessToken {
-            success?(token: accessToken)
+                failure: LinkedInAuthFailureCallback?) {        
+        if let linkedInConfiguration = linkedInConfiguration {
+            LISDKSessionManager.createSessionWithAuth(linkedInConfiguration.permissions,
+                                                      state: linkedInConfiguration.state,
+                                                      showGoToAppStoreDialog: false,
+                                                      successBlock:
+                { [weak self] (response) in
+                    let accessToken = self?.tokenFromSDKSession(LISDKSessionManager.sharedInstance().session)
+                    LinkedInTokenManager.sharedManager.accessToken = accessToken
+                    success?(token: accessToken)
+                }, errorBlock: { (error) in
+                    failure?(error: NSError.error(withLIError: error))
+            })
         } else {
-            if let linkedInConfiguration = linkedInConfiguration {
-                LISDKSessionManager.createSessionWithAuth(linkedInConfiguration.permissions,
-                                                          state: linkedInConfiguration.state,
-                                                          showGoToAppStoreDialog: false,
-                                                          successBlock:
-                    { [weak self] (response) in
-                        let accessToken = self?.tokenFromSDKSession(LISDKSessionManager.sharedInstance().session)
-                        LinkedInTokenManager.sharedManager.accessToken = accessToken
-                        success?(token: accessToken)
-                    }, errorBlock: { (error) in
-                        failure?(error: NSError.error(withLIError: error))
-                })
-            } else {
-                failure?(error: NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
-            }
+            failure?(error: NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
         }
     }
     
