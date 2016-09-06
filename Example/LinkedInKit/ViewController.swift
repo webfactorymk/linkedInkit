@@ -21,6 +21,22 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplicationDidBecomeActiveNotification, object: nil)
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func applicationDidBecomeActive() {
+        if !LinkedInKit.isAuthorized {
+            signOut()
+        }
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     func setupViews() {
@@ -61,13 +77,16 @@ class ViewController: UIViewController {
                 
                 self?.getUserProfile()
             }) { error in
-                
             }
         } else {
-            LinkedInKit.signOut()
-            profileView.hidden = true
-            button.setTitle("Sign In", forState: .Normal)
+            signOut()
         }
+    }
+    
+    func signOut() {
+        LinkedInKit.signOut()
+        profileView.hidden = true
+        button.setTitle("Sign In", forState: .Normal)
     }
     
     func getUserProfile() {
