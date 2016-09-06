@@ -37,7 +37,7 @@ class LinkedInAuthorizationViewController: UIViewController {
     let configuration: LinkedInConfiguration
     let successCallback: LinkedInAuthCodeSuccessCallback?
     let cancelCallback: LinkedInAuthCodeCancelCallback?
-    let failureCalback: LinkedInAuthFailureCallback?
+    let failureCallback: LinkedInAuthFailureCallback?
     var isHandlingRedirectURL = false
     
     private let webView = UIWebView()
@@ -46,12 +46,12 @@ class LinkedInAuthorizationViewController: UIViewController {
     init(configuration: LinkedInConfiguration,
          successCallback: LinkedInAuthCodeSuccessCallback?,
          cancelCallback: LinkedInAuthCodeCancelCallback?,
-         failureCalback: LinkedInAuthFailureCallback?) {
+         failureCallback: LinkedInAuthFailureCallback?) {
         
         self.configuration = configuration
         self.successCallback = successCallback
         self.cancelCallback = cancelCallback
-        self.failureCalback = failureCalback
+        self.failureCallback = failureCallback
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -183,13 +183,13 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
             if let _ = url.rangeOfString(Constants.Parameters.error) {
                 if let _ = url.rangeOfString(Constants.ErrorReasons.loginCancelled) {
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.AuthCanceled)
-                    failureCalback?(error: error)
+                    failureCallback?(error: error)
                 } else {
                     let errorDescription = getParameter(withName: Constants.Parameters.error,
                                                         fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                               customDescription: errorDescription)
-                    failureCalback?(error: error)
+                    failureCallback?(error: error)
                 }
             } else {
                 if let receivedState = getParameter(withName: Constants.Parameters.state,
@@ -203,7 +203,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                                                         fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                               customDescription: CustomErrorDescription.authFailureError)
-                    failureCalback?(error: error)
+                    failureCallback?(error: error)
                 }
             }
         }
@@ -226,7 +226,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                           message: error!.localizedDescription)
                 return
             }
-            failureCalback?(error: error)
+            failureCallback?(error: error)
         }
     }
 
