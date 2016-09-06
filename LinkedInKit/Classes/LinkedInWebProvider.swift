@@ -148,7 +148,7 @@ class LinkedInWebProvider: LinkedInProvider {
             viewController.delegate = viewControllerDelegate
             showAuthorizationViewController(viewController)
         } else {
-            assert(linkedInConfiguration == nil, "LinkedInKit is not configured properly. See LinkedInConfiguration")
+            failureCallback?(error: NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
         }
     }
     
@@ -192,7 +192,7 @@ class LinkedInWebProvider: LinkedInProvider {
                     }
             }
         } else {
-            assert(linkedInConfiguration == nil, "LinkedInKit is not configured properly. See LinkedInConfiguration")
+            failure(error: NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
         }
     }
     
