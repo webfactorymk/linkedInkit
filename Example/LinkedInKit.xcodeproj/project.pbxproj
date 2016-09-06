@@ -15,6 +15,7 @@
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		7E4D3010E8A3709D1F33062F /* Pods_LinkedInKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18D9D12584D3B1D9FAD27692 /* Pods_LinkedInKit_Tests.framework */; };
 		9DEF32D04BCCCD2D6C38A524 /* Pods_LinkedInKit_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13CFBF06E357A455A577BBF7 /* Pods_LinkedInKit_Example.framework */; };
+		C6585D731D7ED949001111CE /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6585D721D7ED949001111CE /* ProfileView.swift */; };
 		C6DA9C2A1D353D1A00A77A23 /* DesignManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6DA9C291D353D1A00A77A23 /* DesignManager.swift */; };
 		C6DA9C2C1D353DBC00A77A23 /* CustomLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6DA9C2B1D353DBC00A77A23 /* CustomLoadingView.swift */; };
 /* End PBXBuildFile section */
@@ -48,6 +49,7 @@
 		73F4EC27C772B58907E8F08B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		73F8A919BA9B7B0253E9E857 /* Pods-LinkedInKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LinkedInKit_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LinkedInKit_Tests/Pods-LinkedInKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		A4AE5C5280E0D162667C8D4F /* Pods-LinkedInKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LinkedInKit_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LinkedInKit_Tests/Pods-LinkedInKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		C6585D721D7ED949001111CE /* ProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C6DA9C291D353D1A00A77A23 /* DesignManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DesignManager.swift; sourceTree = "<group>"; };
 		C6DA9C2B1D353DBC00A77A23 /* CustomLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomLoadingView.swift; sourceTree = "<group>"; };
 		DE007F00BE84CA6D081786E8 /* LinkedInKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LinkedInKit.podspec; path = ../LinkedInKit.podspec; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				C6585D721D7ED949001111CE /* ProfileView.swift */,
 				C6DA9C2B1D353DBC00A77A23 /* CustomLoadingView.swift */,
 				C6DA9C291D353D1A00A77A23 /* DesignManager.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -367,6 +370,7 @@
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				C6DA9C2A1D353D1A00A77A23 /* DesignManager.swift in Sources */,
+				C6585D731D7ED949001111CE /* ProfileView.swift in Sources */,
 				C6DA9C2C1D353DBC00A77A23 /* CustomLoadingView.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);

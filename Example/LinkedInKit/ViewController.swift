@@ -1,6 +1,8 @@
 import UIKit
 import LinkedInKit
 
+typealias LinkedInAuthCallback = (success: Bool, user: [String: AnyObject]?, error: NSError?) -> ()
+
 let baseUrl = "https://api.linkedin.com/v1/people/~"
 let profileInfo = "id,formatted-name,email-address,public-profile-url"
 let pictureParams = "picture-url,picture-urls::(original)"
@@ -13,8 +15,8 @@ let linkedInProfileUrl = "\(baseUrl):(\(profileInfo),\(pictureParams),\(location
 
 class ViewController: UIViewController {
     
+    let profileView = ProfileView()
     var button: UIButton!
-    var shareButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,30 +24,30 @@ class ViewController: UIViewController {
     }
     
     func setupViews() {
+        let defaultOffset: CGFloat = 10.0
+        let mainScreenBounds = UIScreen.mainScreen().bounds
         
-        let mainScreen = UIScreen.mainScreen().bounds
-        let frame = CGRect(x: (mainScreen.width - 100) / 2,
-                           y: (mainScreen.height - 40) / 2,
-                           width: 100.0,
+        profileView.frame = CGRect(x: 0, y: 20.0, width: mainScreenBounds.width, height: 200.0)
+        view.addSubview(profileView)
+        
+        let frame = CGRect(x: defaultOffset,
+                           y: mainScreenBounds.height - 40 - defaultOffset,
+                           width: mainScreenBounds.width - 2 * defaultOffset,
                            height: 40.0)
         button = UIButton(frame: frame)
-        shareButton = UIButton(frame: CGRectMake(frame.origin.x, frame.origin.y + 50, frame.width, frame.height))
         
         if !LinkedInKit.isAuthorized {
             button.setTitle("Sign In", forState: .Normal)
+            profileView.hidden = true
         } else {
+            getUserProfile()
             button.setTitle("Sign Out", forState: .Normal)
         }
         
         button.setTitleColor(UIColor.blueColor(), forState: .Normal)
         button.addTarget(self, action: #selector(ViewController.onButton),  forControlEvents: .TouchUpInside)
         
-        shareButton.setTitle("Share", forState: .Normal)
-        shareButton.setTitleColor(UIColor.blueColor(), forState: .Normal)
-        shareButton.addTarget(self, action: #selector(ViewController.onShareButton), forControlEvents: .TouchUpInside)
-        
         view.addSubview(button)
-        view.addSubview(shareButton)
     }
     
     func onButton() {
@@ -57,37 +59,47 @@ class ViewController: UIViewController {
                     self?.button.setTitle("Sign Out", forState: .Normal)
                 }
                 
-                LinkedInKit.requestUrl(linkedInProfileUrl,
-                    method: .GET,
-                    parameters: nil,
-                    success: { (response) in
-                        print("Success")
-                    }, failure: nil)
+                self?.getUserProfile()
             }) { error in
                 
             }
         } else {
             LinkedInKit.signOut()
+            profileView.hidden = true
             button.setTitle("Sign In", forState: .Normal)
         }
     }
     
-    func onShareButton() {
-        let testParameters = ["comment": "ds fsdf gdfgfdg fs",
-                              "content": ["title": "LinkedIn Developers Resources",
-                                "description": "Leverage LinkedIn's APIs to maximize engagement",
-                                "submitted-url": "https://developer.linkedin.com",
-                                "submitted-image-url": "https://example.com/logo.png"],
-                              "visibility": ["code": "anyone"]]
-        
-        LinkedInKit.requestUrl("https://api.linkedin.com/v1/people/~/shares?format=json",
-                               method: .POST,
-                               parameters: testParameters,
-                               success: { (response) in
-                                UIAlertView(title: nil, message: String(response?.jsonObject), delegate: nil, cancelButtonTitle: "Ok").show()
-                                print(response?.jsonObject)
-            }, failure: { (error) in
-                UIAlertView(title: nil, message: error?.localizedDescription, delegate: nil, cancelButtonTitle: "Ok").show()
+    func getUserProfile() {
+        LinkedInKit.requestUrl(linkedInProfileUrl,
+                               method: .GET,
+                               parameters: nil,
+                               success: { [weak self] (response) in
+                                if let json = response?.jsonObject {
+                                    print(json)
+                                    let name = json["formattedName"] as? String
+                                    var jobTitle: String? = ""
+                                    var profileImageURL: String?
+                                    
+                                    if let positionJson = json["positions"] as? [String: AnyObject] {
+                                        if let positionsArray = positionJson["values"] as? [[String: AnyObject]] {
+                                            let mostRecentPosition = positionsArray[0]
+                                            jobTitle = mostRecentPosition["title"] as? String
+                                        }
+                                    }
+                                    
+                                    if let pictureURLs = json["pictureUrls"],
+                                        values = pictureURLs["values"] as? [String] {
+                                        profileImageURL = values[0]
+                                    }
+                                    
+                                    self?.profileView.updateInfoWith(name: name,
+                                        position: jobTitle,
+                                        profileImageURL: profileImageURL)
+                                    self?.profileView.hidden = false
+                                }
+            }, failure: { [weak self] error in
+                self?.profileView.hidden = true
         })
     }
 }
