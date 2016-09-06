@@ -16,15 +16,14 @@ public class LinkedInKit {
     }
     
     static public var authViewControllerDelegate: LinkedInAuthorizationViewControllerDelegate? {
-        set { LinkedInWebProvider.sharedProvider.httpClient?.viewControllerDelegate = newValue }
-        get { return LinkedInWebProvider.sharedProvider.httpClient?.viewControllerDelegate }
+        set { LinkedInWebProvider.sharedProvider.viewControllerDelegate = newValue }
+        get { return LinkedInWebProvider.sharedProvider.viewControllerDelegate }
 
     }
     
     public class func setup(withConfiguration configuration: LinkedInConfiguration) {
         LinkedInSdkProvider.sharedProvider.linkedInConfiguration = configuration
-        LinkedInWebProvider.sharedProvider.httpClient =
-            LinkedInHTTPClient(linkedInConfiguration: configuration)
+        LinkedInWebProvider.sharedProvider.linkedInConfiguration = configuration
     }
     
     public class func authenticate(success: LinkedInAuthSuccessCallback?,
