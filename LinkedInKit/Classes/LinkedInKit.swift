@@ -72,7 +72,13 @@ public class LinkedInKit {
     }
     
     class func linkedInProvider() -> LinkedInProvider {
-        if isLinkedInAppInstalled {
+        if isAuthorized {
+            if isLinkedInAppInstalled && isTokenFromMobileSDK {
+                return LinkedInSdkProvider.sharedProvider
+            }
+            return LinkedInWebProvider.sharedProvider
+            
+        } else if isLinkedInAppInstalled {
             return LinkedInSdkProvider.sharedProvider
         }
         return LinkedInWebProvider.sharedProvider
