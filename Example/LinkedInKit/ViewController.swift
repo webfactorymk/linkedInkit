@@ -16,6 +16,7 @@ let linkedInProfileUrl = "\(baseUrl):(\(profileInfo),\(pictureParams),\(location
 class ViewController: UIViewController {
     
     let profileView = ProfileView()
+    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
     var button: UIButton!
     
     override func viewDidLoad() {
@@ -64,10 +65,17 @@ class ViewController: UIViewController {
         button.addTarget(self, action: #selector(ViewController.onButton),  forControlEvents: .TouchUpInside)
         
         view.addSubview(button)
+        
+        activityIndicator.frame = CGRect(x: (mainScreenBounds.width - 20) / 2,
+                                         y: (mainScreenBounds.height - 20) / 2,
+                                         width: 20,
+                                         height: 20)
+        view.addSubview(activityIndicator)
     }
     
     func onButton() {
         if !LinkedInKit.isAuthorized {
+            activityIndicator.startAnimating()
             LinkedInKit.authenticate({ [weak self] (token) in
                 if !LinkedInKit.isAuthorized {
                     self?.button.setTitle("Sign In", forState: .Normal)
@@ -90,6 +98,10 @@ class ViewController: UIViewController {
     }
     
     func getUserProfile() {
+        if !activityIndicator.isAnimating() {
+            activityIndicator.startAnimating()
+        }
+        
         LinkedInKit.requestUrl(linkedInProfileUrl,
                                method: .GET,
                                parameters: nil,
@@ -116,9 +128,12 @@ class ViewController: UIViewController {
                                         position: jobTitle,
                                         profileImageURL: profileImageURL)
                                     self?.profileView.hidden = false
+                                    
+                                    self?.activityIndicator.stopAnimating()
                                 }
             }, failure: { [weak self] error in
                 self?.profileView.hidden = true
+                self?.activityIndicator.stopAnimating()
         })
     }
 }
