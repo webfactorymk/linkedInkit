@@ -9,7 +9,7 @@ class LinkedInWebProvider: LinkedInProvider {
     var linkedInConfiguration: LinkedInConfiguration?
     var presentingViewController: UIViewController?
     
-    public var viewControllerDelegate: LinkedInAuthorizationViewControllerDelegate?
+    weak var viewControllerDelegate: LinkedInAuthorizationViewControllerDelegate?
     private var requestManager: Alamofire.Manager
     
     init() {
@@ -18,10 +18,9 @@ class LinkedInWebProvider: LinkedInProvider {
     
     func signIn(success: LinkedInAuthSuccessCallback?,
                 failure: LinkedInAuthFailureCallback?) {
-        
         getAuthorizationCode(withSuccessCallback: { [weak self] (code) in
             self?.getAccessToken(forAuthorizationCode: code,
-                success: { [weak self] (token) in
+                success: { (token) in
                     LinkedInTokenManager.sharedManager.accessToken = token
                     success?(token: token)
                 }, failure: { (error) in
@@ -44,18 +43,19 @@ class LinkedInWebProvider: LinkedInProvider {
     
     func requestUrl(urlString: String,
                     method: Alamofire.Method,
-                    parameters: [String : AnyObject]?,
+                    parameters: [String: AnyObject]?,
                     success: LinkedInRequestSuccessCallback?,
                     failure: LinkedInRequestFailureCallback?) {
         
         if LinkedInTokenManager.sharedManager.hasValidAccessToken {
             let token = LinkedInTokenManager.sharedManager.accessToken!.accessToken!
-            let headers = [Constants.HttpHeaderKeys.authorization: NSString(format: Constants.HttpHeaderValues.authorization, token) as String,
+            let authHeaderValue = NSString(format: Constants.HttpHeaderValues.authorization, token) as String
+            let headers = [Constants.HttpHeaderKeys.authorization: authHeaderValue,
                            Constants.HttpHeaderKeys.format: Constants.HttpHeaderValues.format,
                            Constants.HttpHeaderKeys.contentType: Constants.HttpHeaderValues.contentType]
             let encoding = (method == .GET) ? Alamofire.ParameterEncoding.URL : Alamofire.ParameterEncoding.JSON
             
-            let request = requestManager.request(
+            _ = requestManager.request(
                 method,
                 urlString,
                 parameters: parameters,
@@ -64,7 +64,7 @@ class LinkedInWebProvider: LinkedInProvider {
                     switch response.result {
                     case .Success(let JSON):
                         let sdkResponse = LinkedInSDKResponse()
-                        sdkResponse.jsonObject = JSON as! [String : AnyObject]
+                        sdkResponse.jsonObject = (JSON as! [String: AnyObject])
                         sdkResponse.statusCode = 200
                         
                         success?(response: sdkResponse)
@@ -94,6 +94,7 @@ class LinkedInWebProvider: LinkedInProvider {
                             memberURL = NSURL(string: urlString)
                         }
                     }
+                    
                     if let memberURL = memberURL where UIApplication.sharedApplication().canOpenURL(memberURL) {
                         UIApplication.sharedApplication().openURL(memberURL)
                         success?(success: true)
@@ -130,17 +131,14 @@ class LinkedInWebProvider: LinkedInProvider {
                                                   cancelCallback: LinkedInAuthCodeCancelCallback?,
                                                   failureCallback: LinkedInAuthFailureCallback?) {
         if let linkedInConfiguration = linkedInConfiguration {
-            let viewController = LinkedInAuthorizationViewController(
+            let viewController = LinkedInAuthorizationViewController (
                 configuration: linkedInConfiguration,
                 successCallback: { [weak self] (code) in
-                    
                     self?.hideAuthorizationViewController()
                     successCallback?(code: code)
-                    
                 }, cancelCallback: { [weak self] in
                     self?.hideAuthorizationViewController()
                     cancelCallback?()
-                    
             }) { [weak self] (error) in
                 self?.hideAuthorizationViewController()
                 failureCallback?(error: error)
@@ -174,8 +172,7 @@ class LinkedInWebProvider: LinkedInProvider {
                         if let json = JSON as? [String: AnyObject] {
                             if let accessToken = json[Constants.Parameters.accessToken] as? String,
                                 expireTimestamp = json[Constants.Parameters.expiresIn] as? Double {
-                                
-                                let expireDate = NSDate(timeIntervalSinceNow: NSTimeInterval(expireTimestamp/1000))
+                                let expireDate = NSDate(timeIntervalSinceNow: NSTimeInterval(expireTimestamp / 1000))
                                 let token = LinkedInAccessToken(withAccessToken: accessToken,
                                     expireDate: expireDate,
                                     isSDK: false)
@@ -204,6 +201,7 @@ class LinkedInWebProvider: LinkedInProvider {
         if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
             navigationController.modalPresentationStyle = UIModalPresentationStyle.FormSheet
         }
+        
         presentingViewController?.presentViewController(navigationController, animated: true, completion: nil)
     }
     

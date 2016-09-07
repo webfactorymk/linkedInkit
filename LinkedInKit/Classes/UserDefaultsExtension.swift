@@ -18,6 +18,7 @@ extension NSUserDefaults {
         if let data = standardUserDefaults().objectForKey(linkedInTokenKey) as? NSData {
             return NSKeyedUnarchiver.unarchiveObjectWithData(data) as? LinkedInAccessToken
         }
+        
         return nil
     }
 }

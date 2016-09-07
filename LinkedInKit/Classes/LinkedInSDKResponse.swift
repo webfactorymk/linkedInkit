@@ -23,6 +23,7 @@ public class LinkedInSDKResponse: NSObject {
     
     init(withDictionary dictionary: [String: AnyObject]?, statusCode: Int) {
         super.init()
+        
         self.statusCode = statusCode
         self.jsonObject = dictionary
     }

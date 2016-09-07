@@ -27,7 +27,7 @@ class LinkedInSdkProvider: LinkedInProvider {
     
     func requestUrl(urlString: String,
                     method: Alamofire.Method,
-                    parameters: [String : AnyObject]?,
+                    parameters: [String: AnyObject]?,
                     success: LinkedInRequestSuccessCallback?,
                     failure: LinkedInRequestFailureCallback?) {
         if LinkedInTokenManager.sharedManager.hasValidAccessToken {
@@ -45,6 +45,7 @@ class LinkedInSdkProvider: LinkedInProvider {
                 if let requestURL = NSURL(string: urlString), parameters = parameters {
                     let urlComponents = NSURLComponents(URL: requestURL, resolvingAgainstBaseURL: false)
                     urlComponents?.queryItems = urlComponents?.queryItems ?? [NSURLQueryItem]()
+                    
                     for item in parameters {
                         if let value = item.1 as? String {
                             let queryItem = NSURLQueryItem(name: item.0, value: value)
@@ -60,8 +61,8 @@ class LinkedInSdkProvider: LinkedInProvider {
                 method: method.rawValue,
                 body: requestBody,
                 success: { (response) in
-                    
-                    if let dataFromString = response.data.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
+                    if let dataFromString = response.data.dataUsingEncoding(NSUTF8StringEncoding,
+                        allowLossyConversion: false) {
                         success?(response: LinkedInSDKResponse(withData: dataFromString,
                             statusCode: Int(response.statusCode)))
                     } else {
@@ -103,6 +104,7 @@ class LinkedInSdkProvider: LinkedInProvider {
                                        expireDate: session.accessToken.expiration,
                                        isSDK: true)
         }
+        
         return nil
     }
 }
