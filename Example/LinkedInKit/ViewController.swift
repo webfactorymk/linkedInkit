@@ -21,9 +21,13 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupViews()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self,
+                                                         selector: #selector(applicationDidBecomeActive),
+                                                         name: UIApplicationDidBecomeActiveNotification,
+                                                         object: nil)
     }
     
     deinit {
@@ -31,16 +35,12 @@ class ViewController: UIViewController {
     }
     
     func applicationDidBecomeActive() {
-        if !LinkedInKit.isAuthorized {
-            signOut()
-        }
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
+        if !LinkedInKit.isAuthorized { signOut() }
     }
     
     func setupViews() {
+        view.backgroundColor = UIColor.whiteColor()
+        
         let defaultOffset: CGFloat = 10.0
         let mainScreenBounds = UIScreen.mainScreen().bounds
         
@@ -84,7 +84,9 @@ class ViewController: UIViewController {
                 }
                 
                 self?.getUserProfile()
-            }) { error in
+            }) { [weak self] error in
+                self?.profileView.hidden = true
+                self?.activityIndicator.stopAnimating()
             }
         } else {
             signOut()
@@ -98,9 +100,7 @@ class ViewController: UIViewController {
     }
     
     func getUserProfile() {
-        if !activityIndicator.isAnimating() {
-            activityIndicator.startAnimating()
-        }
+        if !activityIndicator.isAnimating() { activityIndicator.startAnimating() }
         
         LinkedInKit.requestUrl(linkedInProfileUrl,
                                method: .GET,
@@ -112,11 +112,10 @@ class ViewController: UIViewController {
                                     var jobTitle: String? = ""
                                     var profileImageURL: String?
                                     
-                                    if let positionJson = json["positions"] as? [String: AnyObject] {
-                                        if let positionsArray = positionJson["values"] as? [[String: AnyObject]] {
-                                            let mostRecentPosition = positionsArray[0]
-                                            jobTitle = mostRecentPosition["title"] as? String
-                                        }
+                                    if let positionJson = json["positions"] as? [String: AnyObject],
+                                        positionsArray = positionJson["values"] as? [[String: AnyObject]] {
+                                        let mostRecentPosition = positionsArray[0]
+                                        jobTitle = mostRecentPosition["title"] as? String
                                     }
                                     
                                     if let pictureURLs = json["pictureUrls"],
@@ -128,9 +127,9 @@ class ViewController: UIViewController {
                                         position: jobTitle,
                                         profileImageURL: profileImageURL)
                                     self?.profileView.hidden = false
-                                    
-                                    self?.activityIndicator.stopAnimating()
                                 }
+                                
+                                self?.activityIndicator.stopAnimating()
             }, failure: { [weak self] error in
                 self?.profileView.hidden = true
                 self?.activityIndicator.stopAnimating()

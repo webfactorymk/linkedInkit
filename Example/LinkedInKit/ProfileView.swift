@@ -9,6 +9,7 @@ class ProfileView: UIView {
     
     init() {
         super.init(frame: CGRectZero)
+        
         setupViews()
     }
     
