@@ -181,7 +181,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
     func webView(webView: UIWebView,
                  shouldStartLoadWithRequest request: NSURLRequest,
                                             navigationType: UIWebViewNavigationType) -> Bool {
-        let url = request.URL!.absoluteString
+        let url = request.URL!.absoluteString!
         isHandlingRedirectURL = url.hasPrefix(configuration.redirectURL)
         
         if isHandlingRedirectURL {
@@ -216,15 +216,14 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         return !isHandlingRedirectURL
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
+    func webView(webView: UIWebView, didFailLoadWithError error: NSError) {
         hideLoadingView()
         
         if !isHandlingRedirectURL {
-            if let errorCode = error?.code,
-                networkErrorCode = CFNetworkErrors(rawValue: Int32(errorCode))
+            if let networkErrorCode = CFNetworkErrors(rawValue: Int32(error.code))
                 where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
                 showAlert(withTitle: NSLocalizedString("Network error", comment: ""),
-                          message: error!.localizedDescription)
+                          message: error.localizedDescription)
                 return
             }
             
