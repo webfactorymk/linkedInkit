@@ -66,10 +66,6 @@ public class LinkedInHTTPClient: Alamofire.Manager {
     func showAuthorizationViewController(viewController: LinkedInAuthorizationViewController) {
         presentingViewController = UIApplication.sharedApplication().keyWindow?.rootViewController
         let navigationController = UINavigationController(rootViewController: viewController)
-        
-        if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
-            navigationController.modalPresentationStyle = UIModalPresentationStyle.FormSheet
-        }
         presentingViewController?.presentViewController(navigationController, animated: true, completion: nil)
     }
     
