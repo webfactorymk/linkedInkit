@@ -37,7 +37,7 @@ class LinkedInAuthorizationViewController: UIViewController {
     let configuration: LinkedInConfiguration
     let successCallback: LinkedInAuthCodeSuccessCallback?
     let cancelCallback: LinkedInAuthCodeCancelCallback?
-    let failureCalback: LinkedInAuthFailureCallback?
+    let failureCallback: LinkedInAuthFailureCallback?
     var isHandlingRedirectURL = false
     
     private let webView = UIWebView()
@@ -46,12 +46,11 @@ class LinkedInAuthorizationViewController: UIViewController {
     init(configuration: LinkedInConfiguration,
          successCallback: LinkedInAuthCodeSuccessCallback?,
          cancelCallback: LinkedInAuthCodeCancelCallback?,
-         failureCalback: LinkedInAuthFailureCallback?) {
-        
+         failureCallback: LinkedInAuthFailureCallback?) {
         self.configuration = configuration
         self.successCallback = successCallback
         self.cancelCallback = cancelCallback
-        self.failureCalback = failureCalback
+        self.failureCallback = failureCallback
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -62,21 +61,28 @@ class LinkedInAuthorizationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupViews()
         showLoadingView()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
         webView.endEditing(false)
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        let redirectURL = configuration.redirectURL.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
-        var urlString = NSString(format: ApiRoutes.authorizationRoute,configuration.clientID,configuration.state,redirectURL!,configuration.formattedPermissions() ?? "")
-
+        let redirectURL = configuration.redirectURL
+            .stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
+        let urlString = NSString(format: ApiRoutes.authorizationRoute,
+                                 configuration.clientID,
+                                 configuration.state,
+                                 redirectURL!,
+                                 configuration.formattedPermissions() ?? "")
+        
         webView.loadRequest(NSURLRequest(URL: NSURL(string: urlString as String)!,
             cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData,
             timeoutInterval: 15.0))
@@ -172,7 +178,6 @@ class LinkedInAuthorizationViewController: UIViewController {
 }
 
 extension LinkedInAuthorizationViewController: UIWebViewDelegate {
-    
     func webView(webView: UIWebView,
                  shouldStartLoadWithRequest request: NSURLRequest,
                                             navigationType: UIWebViewNavigationType) -> Bool {
@@ -183,13 +188,13 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
             if let _ = url.rangeOfString(Constants.Parameters.error) {
                 if let _ = url.rangeOfString(Constants.ErrorReasons.loginCancelled) {
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.AuthCanceled)
-                    failureCalback?(error: error)
+                    failureCallback?(error: error)
                 } else {
                     let errorDescription = getParameter(withName: Constants.Parameters.error,
                                                         fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                               customDescription: errorDescription)
-                    failureCalback?(error: error)
+                    failureCallback?(error: error)
                 }
             } else {
                 if let receivedState = getParameter(withName: Constants.Parameters.state,
@@ -199,18 +204,15 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                     where receivedState == configuration.state {
                     successCallback?(code: authorizationCode)
                 } else {
-                    let errorDescription = getParameter(withName: Constants.Parameters.error,
-                                                        fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                               customDescription: CustomErrorDescription.authFailureError)
-                    failureCalback?(error: error)
+                    failureCallback?(error: error)
                 }
             }
         }
         
-        if !isHandlingRedirectURL {
-            showLoadingView()
-        }
+        if !isHandlingRedirectURL { showLoadingView() }
+        
         return !isHandlingRedirectURL
     }
     
@@ -218,7 +220,6 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         hideLoadingView()
         
         if !isHandlingRedirectURL {
-            print(error?.code)
             if let errorCode = error?.code,
                 networkErrorCode = CFNetworkErrors(rawValue: Int32(errorCode))
                 where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
@@ -226,10 +227,11 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                           message: error!.localizedDescription)
                 return
             }
-            failureCalback?(error: error)
+            
+            failureCallback?(error: error)
         }
     }
-
+    
     func webViewDidFinishLoad(webView: UIWebView) {
         hideLoadingView()
         
@@ -247,6 +249,7 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
                 return item.value
             }
         }
+        
         return nil
     }
 }

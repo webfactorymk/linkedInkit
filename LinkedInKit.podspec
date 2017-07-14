@@ -8,7 +8,7 @@ TODO: Add long description of the pod here.
 
   s.homepage         = 'https://github.com/<GITHUB_USERNAME>/LinkedInKit'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'Mariana' => 'mariana.ristovska@webfactory.mk' }
+  s.author           = { 'Mariana' => 'mariana.ristovska@webfactory.mk', 'Gordan' => 'gordan.cvetkovski@webfactory.mk' }
   s.source           = { :git => 'https://github.com/<GITHUB_USERNAME>/LinkedInKit.git', :tag => s.version.to_s }
   s.requires_arc = true
   s.ios.deployment_target = '8.0'

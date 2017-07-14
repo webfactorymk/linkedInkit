@@ -43,7 +43,7 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
     }
     
     public var statusCode: Int {
-        var code = 10000
+        let code = 10000
         
         switch self {
         case .AuthCanceled:
@@ -105,9 +105,10 @@ public extension NSError {
         return NSError.error(withErrorDomain: errorDomain, customDescription: nil)
     }
     
-    class func error(withErrorDomain errorDomain: LinkedInErrorDomain, customDescription: String?) -> NSError {
+    class func error(withErrorDomain errorDomain: LinkedInErrorDomain,
+                                     customDescription: String?) -> NSError {
         return NSError(domain: errorDomain.rawValue ,
-                             code: errorDomain.statusCode,
-                             userInfo: [NSLocalizedDescriptionKey: customDescription ?? errorDomain.description])
+                       code: errorDomain.statusCode,
+                       userInfo: [NSLocalizedDescriptionKey: customDescription ?? errorDomain.description])
     }
 }

@@ -4,7 +4,7 @@ import Alamofire
 public class LinkedInKit {
     
     public static var isAuthorized: Bool {
-        return LinkedInAuthenticator.sharedInstance.isAuthorized
+        return LinkedInTokenManager.sharedManager.isAuthorized
     }
     
     public static var isLinkedInAppInstalled: Bool {
@@ -12,23 +12,27 @@ public class LinkedInKit {
     }
     
     public static var isTokenFromMobileSDK: Bool {
-        return LinkedInAuthenticator.sharedInstance.accessToken?.isSDK ?? false
+        return LinkedInTokenManager.sharedManager.accessToken?.isSDK ?? false
     }
     
     static public var authViewControllerDelegate: LinkedInAuthorizationViewControllerDelegate? {
-        set { LinkedInRequestProvider.sharedProvider.httpClient?.viewControllerDelegate = newValue }
-        get { return LinkedInRequestProvider.sharedProvider.httpClient?.viewControllerDelegate }
+        set { LinkedInWebProvider.sharedProvider.viewControllerDelegate = newValue }
+        get { return LinkedInWebProvider.sharedProvider.viewControllerDelegate }
+
     }
     
     public class func setup(withConfiguration configuration: LinkedInConfiguration) {
-        let httpClient = LinkedInHTTPClient(linkedInConfiguration: configuration)
-        LinkedInRequestProvider.sharedProvider.httpClient = httpClient
+        LinkedInSdkProvider.sharedProvider.linkedInConfiguration = configuration
+        LinkedInWebProvider.sharedProvider.linkedInConfiguration = configuration
     }
     
     public class func authenticate(success: LinkedInAuthSuccessCallback?,
                                    failure: LinkedInAuthFailureCallback?) {
-        LinkedInAuthenticator.sharedInstance.authenticate(success,
-                                                          failure: failure)
+        if LinkedInTokenManager.sharedManager.isAuthorized {
+            success?(token: LinkedInTokenManager.sharedManager.accessToken)
+        } else {
+            linkedInProvider().signIn(success, failure: failure)
+        }
     }
     
     public class func requestUrl(urlString: String,
@@ -36,27 +40,21 @@ public class LinkedInKit {
                                  parameters: [String: AnyObject]?,
                                  success: LinkedInRequestSuccessCallback?,
                                  failure: LinkedInRequestFailureCallback?) {
-        
-        LinkedInRequestProvider.sharedProvider.apiRequestWithUrl(urlString,
-                                                                 method: method,
-                                                                 parameters: parameters,
-                                                                 success: success,
-                                                                 failure: failure)
+        linkedInProvider().requestUrl(urlString,
+                                      method: method,
+                                      parameters: parameters,
+                                      success: success,
+                                      failure: failure)
     }
     
     public class func openProfileWithMemberId(id: String,
                                               success: ((success: Bool) -> ())?,
                                               failure: ((error: NSError) -> ())?) {
-        LinkedInDeeplinkHandler.openProfileWithMemberId(id,
-                                                        success: success,
-                                                        failure: failure)
+        linkedInProvider().openProfileWithMemberId(id, success: success, failure: failure)
     }
     
     public class func signOut() {
-        LISDKAPIHelper.sharedInstance().cancelCalls()
-        LISDKSessionManager.clearSession()
-        LinkedInAuthenticator.sharedInstance.accessToken = nil
-        LinkedInAuthenticator.sharedInstance.clearLinkedInCookies()
+        linkedInProvider().signOut()
     }
        
     public class func shouldHandleUrl(url: NSURL) -> Bool {
@@ -67,10 +65,21 @@ public class LinkedInKit {
                                   openURL url: NSURL,
                                           sourceApplication: String?,
                                           annotation: AnyObject) -> Bool {
-        
         return isLinkedInAppInstalled && LISDKCallbackHandler.application(application,
                                                                           openURL: url,
                                                                           sourceApplication: sourceApplication,
                                                                           annotation: annotation)
+    }
+    
+    class func linkedInProvider() -> LinkedInProvider {
+        if isAuthorized {
+            if isLinkedInAppInstalled && isTokenFromMobileSDK { return LinkedInSdkProvider.sharedProvider }
+            
+            return LinkedInWebProvider.sharedProvider
+        } else if isLinkedInAppInstalled {
+            return LinkedInSdkProvider.sharedProvider
+        }
+        
+        return LinkedInWebProvider.sharedProvider
     }
 }

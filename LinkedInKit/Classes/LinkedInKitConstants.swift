@@ -1,6 +1,10 @@
 import Foundation
 
+public typealias LinkedInAuthSuccessCallback = (token: LinkedInAccessToken?) -> ()
+public typealias LinkedInAuthFailureCallback = (error: NSError?) -> ()
+
 struct Constants {
+    
     static let linkedInScheme = "linkedin://"
     static let linkedInDomain = "linkedin"
     

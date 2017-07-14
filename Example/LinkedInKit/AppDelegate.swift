@@ -17,10 +17,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        window = window ?? UIWindow(frame: UIScreen.mainScreen().bounds)
+        window?.rootViewController = ViewController()
+        window?.makeKeyAndVisible()
+        
+        let permissionsArray = ["r_basicprofile","r_emailaddress","rw_company_admin", "w_share"]
         let configuration = LinkedInConfiguration(withClientID: "78mqqrk2mcaied",
                                                   clientSecret: "4o2gtBTLePRKJi4H",
                                                   state: "qwertyuiop",
-                                                  permissions: ["r_basicprofile","r_emailaddress","rw_company_admin", "w_share"],
+                                                  permissions: permissionsArray,
                                                   redirectURL: "http://www.google.com",
                                                   appID: "4245054")
         LinkedInKit.setup(withConfiguration: configuration)
@@ -39,13 +44,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) { }
 
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+    func application(application: UIApplication,
+                     openURL url: NSURL,
+                             sourceApplication: String?,
+                             annotation: AnyObject) -> Bool {
         if LinkedInKit.shouldHandleUrl(url) {
             return LinkedInKit.application(application,
                                            openURL: url,
                                            sourceApplication: sourceApplication,
                                            annotation: annotation)
         }
+        
         return true
     }
 }

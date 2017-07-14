@@ -21,10 +21,12 @@ public class LinkedInConfiguration: NSObject {
         self.permissions = permissions
         self.redirectURL = redirectURL
         self.appID = appID
+        
         super.init()
     }
     
     func formattedPermissions() -> String? {
-        return permissions?.joinWithSeparator(" ").stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet()) ?? ""
+        return permissions?.joinWithSeparator(" ")
+            .stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet()) ?? ""
     }
 }
