@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (3.5.0)
-  - LinkedInKit (0.1.0):
+  - LinkedInKit (0.1.1):
     - Alamofire
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
@@ -16,7 +16,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: b70a7352335f8ea5babd0a923eb7e8eacc67b877
-  LinkedInKit: d54d395a1979a3122b9c458ef41b0e2066000f59
+  LinkedInKit: a16b4c39250c39bb8c76bb13e3a3811ee5a48b01
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
 
 PODFILE CHECKSUM: d52ebb34d89fff5cac70e63fff2c310a66b4518d
