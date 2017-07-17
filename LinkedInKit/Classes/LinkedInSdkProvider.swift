@@ -6,53 +6,53 @@ class LinkedInSdkProvider: LinkedInProvider {
     static let sharedProvider = LinkedInSdkProvider()
     var linkedInConfiguration: LinkedInConfiguration?
     
-    func signIn(success: LinkedInAuthSuccessCallback?,
+    func signIn(_ success: LinkedInAuthSuccessCallback?,
                 failure: LinkedInAuthFailureCallback?) {        
         if let linkedInConfiguration = linkedInConfiguration {
-            LISDKSessionManager.createSessionWithAuth(linkedInConfiguration.permissions,
+            LISDKSessionManager.createSession(withAuth: linkedInConfiguration.permissions,
                                                       state: linkedInConfiguration.state,
                                                       showGoToAppStoreDialog: false,
                                                       successBlock:
                 { [weak self] (response) in
                     let accessToken = self?.tokenFromSDKSession(LISDKSessionManager.sharedInstance().session)
                     LinkedInTokenManager.sharedManager.accessToken = accessToken
-                    success?(token: accessToken)
-                }, errorBlock: { (error) in
-                    failure?(error: NSError.error(withLIError: error))
+                    success?(accessToken)
+                }, errorBlock: { (error: Error?) in
+                    failure?(error as NSError?)
             })
         } else {
-            failure?(error: NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
+            failure?(NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
         }
     }
     
-    func requestUrl(urlString: String,
-                    method: Alamofire.Method,
+    func requestUrl(_ urlString: String,
+                    method: Alamofire.HTTPMethod,
                     parameters: [String: AnyObject]?,
                     success: LinkedInRequestSuccessCallback?,
                     failure: LinkedInRequestFailureCallback?) {
         if LinkedInTokenManager.sharedManager.hasValidAccessToken {
-            var requestBody: NSData?
+            var requestBody: Data?
             var requestUrlString = urlString
             
-            if let parameters = parameters where (method == .POST || method == .PUT) {
+            if let parameters = parameters, (method == .post || method == .put) {
                 // add params as request body
                 do {
-                    requestBody = try NSJSONSerialization.dataWithJSONObject(parameters,
-                                                                             options: NSJSONWritingOptions.PrettyPrinted)
+                    requestBody = try JSONSerialization.data(withJSONObject: parameters,
+                                                                             options: JSONSerialization.WritingOptions.prettyPrinted)
                 } catch { }
             } else {
                 // append params to url
-                if let requestURL = NSURL(string: urlString), parameters = parameters {
-                    let urlComponents = NSURLComponents(URL: requestURL, resolvingAgainstBaseURL: false)
-                    urlComponents?.queryItems = urlComponents?.queryItems ?? [NSURLQueryItem]()
+                if let requestURL = URL(string: urlString), let parameters = parameters {
+                    var urlComponents = URLComponents(url: requestURL, resolvingAgainstBaseURL: false)
+                    urlComponents?.queryItems = urlComponents?.queryItems ?? [URLQueryItem]()
                     
                     for item in parameters {
                         if let value = item.1 as? String {
-                            let queryItem = NSURLQueryItem(name: item.0, value: value)
+                            let queryItem = URLQueryItem(name: item.0, value: value)
                             urlComponents?.queryItems?.append(queryItem)
                         }
                     }
-                    requestUrlString = String(requestURL)
+                    requestUrlString = String(describing: requestURL)
                 }
             }
             
@@ -61,33 +61,37 @@ class LinkedInSdkProvider: LinkedInProvider {
                 method: method.rawValue,
                 body: requestBody,
                 success: { (response) in
-                    if let dataFromString = response.data.dataUsingEncoding(NSUTF8StringEncoding,
-                        allowLossyConversion: false) {
-                        success?(response: LinkedInSDKResponse(withData: dataFromString,
-                            statusCode: Int(response.statusCode)))
+                    if let statusCode = response?.statusCode,
+                        let dataFromString = response?.data.data(using: String.Encoding.utf8,
+                                                                allowLossyConversion: false) {
+                        success?(LinkedInSDKResponse(withData: dataFromString,
+                                                     statusCode: Int(statusCode)))
                     } else {
-                        success?(response: nil)
+                        success?(nil)
                     }
-                }, error: { (error) in
-                    failure?(error: NSError.error(withLIError: error))
+            }, error: { (error) in
+                failure?(error)
             })
         } else {
-            failure?(error: NSError.error(withErrorDomain: LinkedInErrorDomain.NotAuthenticated))
+            failure?(NSError.error(withErrorDomain: LinkedInErrorDomain.NotAuthenticated))
         }
     }
     
-    func openProfileWithMemberId(id: String,
-                                 success: ((success: Bool) -> ())?,
-                                 failure: ((error: NSError) -> ())?) {
+    func openProfileWithMemberId(_ id: String,
+                                 success: ((_ success: Bool) -> ())?,
+                                 failure: ((_ error: NSError) -> ())?) {
         let customState = "openProfileWithMemberId"
+    
         LISDKDeeplinkHelper.sharedInstance().viewOtherProfile(
             id,
             withState: customState,
             showGoToAppStoreDialog: false,
             success: { (state) in
-                success?(success: state == customState)
-            }, error: { (error, state) in
-                failure?(error: error)
+                success?(state == customState)
+        }, error: { (error: Error?, state: String?) in
+            if let error = error as NSError? {
+                failure?(error as NSError)
+            }
         })
     }
     
@@ -98,8 +102,8 @@ class LinkedInSdkProvider: LinkedInProvider {
     }
     
     //MARK: Helper methods
-    private func tokenFromSDKSession(session: LISDKSession) -> LinkedInAccessToken? {
-        if let session = LISDKSessionManager.sharedInstance().session where session.isValid() {
+    fileprivate func tokenFromSDKSession(_ session: LISDKSession) -> LinkedInAccessToken? {
+        if let session = LISDKSessionManager.sharedInstance().session, session.isValid() {
             return LinkedInAccessToken(withAccessToken: session.accessToken.accessTokenValue,
                                        expireDate: session.accessToken.expiration,
                                        isSDK: true)

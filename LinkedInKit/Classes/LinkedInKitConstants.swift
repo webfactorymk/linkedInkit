@@ -1,7 +1,7 @@
 import Foundation
 
-public typealias LinkedInAuthSuccessCallback = (token: LinkedInAccessToken?) -> ()
-public typealias LinkedInAuthFailureCallback = (error: NSError?) -> ()
+public typealias LinkedInAuthSuccessCallback = (_ token: LinkedInAccessToken?) -> ()
+public typealias LinkedInAuthFailureCallback = (_ error: NSError?) -> ()
 
 struct Constants {
     

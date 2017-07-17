@@ -1,6 +1,6 @@
 import UIKit
 
-typealias LinkedInAuthCodeSuccessCallback = (code: String) -> ()
+typealias LinkedInAuthCodeSuccessCallback = (_ code: String) -> ()
 typealias LinkedInAuthCodeCancelCallback = () -> ()
 
 public protocol LinkedInAuthorizationViewControllerDelegate: class {
@@ -12,16 +12,16 @@ public protocol LinkedInAuthorizationViewControllerDelegate: class {
 
 public extension LinkedInAuthorizationViewControllerDelegate {
     func linkedInViewControllerNavigationBarColor() -> UIColor? {
-        return UIColor.whiteColor()
+        return UIColor.white
     }
     
     func linkedInViewControllerTitleAttributtedString() -> NSAttributedString? {
-        let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+        let attributes = [NSForegroundColorAttributeName: UIColor.black]
         return NSAttributedString(string: "Sign In", attributes: attributes)
     }
     
     func linkedInViewControllerCancelAttributtedString() -> NSAttributedString? {
-        let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+        let attributes = [NSForegroundColorAttributeName: UIColor.black]
         return NSAttributedString(string: "Cancel", attributes: attributes)
     }
     
@@ -40,8 +40,8 @@ class LinkedInAuthorizationViewController: UIViewController {
     let failureCallback: LinkedInAuthFailureCallback?
     var isHandlingRedirectURL = false
     
-    private let webView = UIWebView()
-    private var loadingView: LinkedInLoadingView?
+    fileprivate let webView = UIWebView()
+    fileprivate var loadingView: LinkedInLoadingView?
     
     init(configuration: LinkedInConfiguration,
          successCallback: LinkedInAuthCodeSuccessCallback?,
@@ -66,35 +66,35 @@ class LinkedInAuthorizationViewController: UIViewController {
         showLoadingView()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         webView.endEditing(false)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         let redirectURL = configuration.redirectURL
-            .stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
-        let urlString = NSString(format: ApiRoutes.authorizationRoute,
+            .addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        let urlString = NSString(format: ApiRoutes.authorizationRoute as NSString,
                                  configuration.clientID,
                                  configuration.state,
                                  redirectURL!,
                                  configuration.formattedPermissions() ?? "")
         
-        webView.loadRequest(NSURLRequest(URL: NSURL(string: urlString as String)!,
-            cachePolicy: NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData,
+        webView.loadRequest(URLRequest(url: URL(string: urlString as String)!,
+            cachePolicy: NSURLRequest.CachePolicy.reloadIgnoringLocalAndRemoteCacheData,
             timeoutInterval: 15.0))
     }
     
     func setupViews() {
         automaticallyAdjustsScrollViewInsets = false
         
-        navigationController?.navigationBar.translucent =  true
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: .Default)
-        navigationController?.navigationBar.backgroundColor = UIColor.clearColor()
-        navigationController?.view.backgroundColor  = UIColor.clearColor()
+        navigationController?.navigationBar.isTranslucent =  true
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.backgroundColor = UIColor.clear
+        navigationController?.view.backgroundColor  = UIColor.clear
         
         let navBarColor = delegate?.linkedInViewControllerNavigationBarColor()
         view.backgroundColor = navBarColor
@@ -103,7 +103,7 @@ class LinkedInAuthorizationViewController: UIViewController {
         if let titleAttrString = delegate?.linkedInViewControllerTitleAttributtedString() {
             label.attributedText = titleAttrString
         } else {
-            let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+            let attributes = [NSForegroundColorAttributeName: UIColor.black]
             label.attributedText = NSAttributedString(string: "Sign In", attributes: attributes)
         }
         label.sizeToFit()
@@ -112,27 +112,27 @@ class LinkedInAuthorizationViewController: UIViewController {
         let customButton = UIButton()
         if let cancelAttrString = delegate?.linkedInViewControllerCancelAttributtedString() {
             customButton.setAttributedTitle(cancelAttrString,
-                                            forState: .Normal)
+                                            for: .normal)
         } else {
-            let attributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+            let attributes = [NSForegroundColorAttributeName: UIColor.black]
             let attributedTitle = NSAttributedString(string: "Cancel", attributes: attributes)
             customButton.setAttributedTitle(attributedTitle,
-                                            forState: .Normal)
+                                            for: .normal)
         }
         customButton.sizeToFit()
         customButton.addTarget(self,
                                action: #selector(LinkedInAuthorizationViewController.cancelTapped),
-                               forControlEvents: .TouchUpInside)
+                               for: .touchUpInside)
         let barButtonItem = UIBarButtonItem(customView: customButton)
         navigationItem.rightBarButtonItems = [barButtonItem]
         
         webView.frame = CGRect(x: 0,
                                y: 64.0,
-                               width: UIScreen.mainScreen().bounds.width,
-                               height: UIScreen.mainScreen().bounds.height - 64.0)
+                               width: UIScreen.main.bounds.width,
+                               height: UIScreen.main.bounds.height - 64.0)
         webView.delegate = self
         webView.scalesPageToFit = true
-        webView.backgroundColor = UIColor.whiteColor()
+        webView.backgroundColor = UIColor.white
         view.addSubview(webView)
     }
     
@@ -152,61 +152,60 @@ class LinkedInAuthorizationViewController: UIViewController {
             }
         }
         
-        loadingView?.hidden = false
+        loadingView?.isHidden = false
         loadingView?.startAnimating()
     }
     
     func hideLoadingView() {
-        loadingView?.hidden = true
+        loadingView?.isHidden = true
         loadingView?.startAnimating()
     }
     
     func showAlert(withTitle title: String, message: String) {
         let alertController = UIAlertController(title: title,
                                                 message: message,
-                                                preferredStyle: .Alert)
+                                                preferredStyle: .alert)
         alertController.addAction(
             UIAlertAction(title: NSLocalizedString("OK", comment: ""),
-            style: .Default) { [weak self] (action) in
+            style: .default) { [weak self] (action) in
                 self?.cancelCallback?()
             })
         
-        dispatch_async(dispatch_get_main_queue()) {
-            self.presentViewController(alertController, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(alertController, animated: true, completion: nil)
         }
     }
 }
 
 extension LinkedInAuthorizationViewController: UIWebViewDelegate {
-    func webView(webView: UIWebView,
-                 shouldStartLoadWithRequest request: NSURLRequest,
+    func webView(_ webView: UIWebView,
+                 shouldStartLoadWith request: URLRequest,
                                             navigationType: UIWebViewNavigationType) -> Bool {
-        let url = request.URL!.absoluteString!
+        let url = request.url!.absoluteString
         isHandlingRedirectURL = url.hasPrefix(configuration.redirectURL)
         
         if isHandlingRedirectURL {
-            if let _ = url.rangeOfString(Constants.Parameters.error) {
-                if let _ = url.rangeOfString(Constants.ErrorReasons.loginCancelled) {
+            if let _ = url.range(of: Constants.Parameters.error) {
+                if let _ = url.range(of: Constants.ErrorReasons.loginCancelled) {
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.AuthCanceled)
-                    failureCallback?(error: error)
+                    failureCallback?(error)
                 } else {
                     let errorDescription = getParameter(withName: Constants.Parameters.error,
                                                         fromURLRequest: request)
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                               customDescription: errorDescription)
-                    failureCallback?(error: error)
+                    failureCallback?(error)
                 }
             } else {
                 if let receivedState = getParameter(withName: Constants.Parameters.state,
                                                     fromURLRequest: request),
-                    authorizationCode = getParameter(withName: Constants.Parameters.code,
-                                                     fromURLRequest: request)
-                    where receivedState == configuration.state {
-                    successCallback?(code: authorizationCode)
+                    let authorizationCode = getParameter(withName: Constants.Parameters.code,
+                                                     fromURLRequest: request), receivedState == configuration.state {
+                    successCallback?(authorizationCode)
                 } else {
                     let error = NSError.error(withErrorDomain: LinkedInErrorDomain.RESTFailure,
                                               customDescription: CustomErrorDescription.authFailureError)
-                    failureCallback?(error: error)
+                    failureCallback?(error)
                 }
             }
         }
@@ -216,32 +215,31 @@ extension LinkedInAuthorizationViewController: UIWebViewDelegate {
         return !isHandlingRedirectURL
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError) {
+    func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         hideLoadingView()
         
         if !isHandlingRedirectURL {
-            if let networkErrorCode = CFNetworkErrors(rawValue: Int32(error.code))
-                where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
+            if let networkErrorCode = CFNetworkErrors(rawValue: Int32(error._code)), networkErrorCode == CFNetworkErrors.cfurlErrorNotConnectedToInternet {
                 showAlert(withTitle: NSLocalizedString("Network error", comment: ""),
                           message: error.localizedDescription)
                 return
             }
             
-            failureCallback?(error: error)
+            failureCallback?(error as NSError)
         }
     }
     
-    func webViewDidFinishLoad(webView: UIWebView) {
+    func webViewDidFinishLoad(_ webView: UIWebView) {
         hideLoadingView()
         
         //Test this out on an iPad
-        if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
-            webView.stringByEvaluatingJavaScriptFromString(iPadWebjs)
+        if UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad {
+            webView.stringByEvaluatingJavaScript(from: iPadWebjs)
         }
     }
     
-    func getParameter(withName name: String, fromURLRequest request: NSURLRequest) -> String? {
-        let urlComponents = NSURLComponents(URL: request.URL!,
+    func getParameter(withName name: String, fromURLRequest request: URLRequest) -> String? {
+        let urlComponents = URLComponents(url: request.url!,
                                             resolvingAgainstBaseURL: false)
         for item in (urlComponents?.queryItems)! {
             if item.name == name {

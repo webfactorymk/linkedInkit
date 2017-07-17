@@ -1,6 +1,6 @@
 import Foundation
 
-public class LinkedInConfiguration: NSObject {
+open class LinkedInConfiguration: NSObject {
     
     var clientID: String
     var clientSecret: String
@@ -26,7 +26,7 @@ public class LinkedInConfiguration: NSObject {
     }
     
     func formattedPermissions() -> String? {
-        return permissions?.joinWithSeparator(" ")
-            .stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet()) ?? ""
+        return permissions?.joined(separator: " ")
+            .addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
     }
 }

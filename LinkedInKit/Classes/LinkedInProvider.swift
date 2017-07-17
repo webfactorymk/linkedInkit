@@ -1,19 +1,19 @@
 import Foundation
 import Alamofire
 
-public typealias LinkedInRequestSuccessCallback = (response: LinkedInSDKResponse?) -> ()
-public typealias LinkedInRequestFailureCallback = (error: NSError?) -> ()
+public typealias LinkedInRequestSuccessCallback = (_ response: LinkedInSDKResponse?) -> ()
+public typealias LinkedInRequestFailureCallback = (_ error: NSError?) -> ()
 
 protocol LinkedInProvider {
-    func signIn(success: LinkedInAuthSuccessCallback?,
+    func signIn(_ success: LinkedInAuthSuccessCallback?,
                 failure: LinkedInAuthFailureCallback?)
-    func requestUrl(urlString: String,
-                    method: Alamofire.Method,
+    func requestUrl(_ urlString: String,
+                    method: Alamofire.HTTPMethod,
                     parameters: [String: AnyObject]?,
                     success: LinkedInRequestSuccessCallback?,
                     failure: LinkedInRequestFailureCallback?)
-    func openProfileWithMemberId(id: String,
-                                 success: ((success: Bool) -> ())?,
-                                 failure: ((error: NSError) -> ())?)
+    func openProfileWithMemberId(_ id: String,
+                                 success: ((_ success: Bool) -> ())?,
+                                 failure: ((_ error: NSError) -> ())?)
     func signOut()
 }

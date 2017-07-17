@@ -1,18 +1,18 @@
 import Foundation
 
 enum LIHTTPErrorCode: Int {
-    case NoInternetConnection = 2
-    case CancelationLinkedIn = 3
-    case ApprovedLinkedInInstall = 6
-    case Unauthorized = 401
-    case Unknown = -1
+    case noInternetConnection = 2
+    case cancelationLinkedIn = 3
+    case approvedLinkedInInstall = 6
+    case unauthorized = 401
+    case unknown = -1
     
     init(value: Int) {
         let codes = [2, 3, 6, 401]
         if codes.contains(value) {
             self = LIHTTPErrorCode(rawValue: value)!
         } else {
-            self = .Unknown
+            self = .unknown
         }
     }
 }
@@ -83,19 +83,18 @@ public extension NSError {
         
         let errorType = LIHTTPErrorCode(value: error.code)
         
-        if errorType == .CancelationLinkedIn {
+        if errorType == .cancelationLinkedIn {
             if let errorInfo = error.userInfo[Constants.Parameters.errorInfo] as? String {
                 if errorInfo == Constants.ErrorReasons.userCancelled {
                     return NSError.error(withErrorDomain: .AppPermissionDenied)
                 }
             }
             return NSError.error(withErrorDomain: .AuthCanceled)
-        } else if errorType == .ApprovedLinkedInInstall {
+        } else if errorType == .approvedLinkedInInstall {
             return NSError.error(withErrorDomain: .ApprovedLinkedInInstall)
-        } else if errorType == .NoInternetConnection {
+        } else if errorType == .noInternetConnection {
             return NSError.error(withErrorDomain: .NoInternetConnection)
-        } else if let  networkErrorCode = CFNetworkErrors(rawValue: Int32(error.code))
-            where networkErrorCode == CFNetworkErrors.CFURLErrorNotConnectedToInternet {
+        } else if let  networkErrorCode = CFNetworkErrors(rawValue: Int32(error.code)), networkErrorCode == CFNetworkErrors.cfurlErrorNotConnectedToInternet {
             return NSError.error(withErrorDomain: .NoInternetConnection)
         }
         return error

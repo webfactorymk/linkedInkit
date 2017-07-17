@@ -8,7 +8,7 @@ class ProfileView: UIView {
     let positionLabel = UILabel()
     
     init() {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
         setupViews()
     }
@@ -20,9 +20,9 @@ class ProfileView: UIView {
     func setupViews() {
         let defautOffset: CGFloat = 10.0
         let imageWidth: CGFloat = 100.0
-        let mainScreenBounds = UIScreen.mainScreen().bounds
+        let mainScreenBounds = UIScreen.main.bounds
         
-        imageView.backgroundColor = UIColor.blueColor()
+        imageView.backgroundColor = UIColor.blue
         imageView.frame = CGRect(x: defautOffset, y: defautOffset, width: imageWidth, height: imageWidth)
         addSubview(imageView)
         
@@ -39,12 +39,12 @@ class ProfileView: UIView {
         addSubview(positionLabel)
     }
     
-    func updateInfoWith(name name: String?, position: String?, profileImageURL: String?) {
+    func updateInfoWith(name: String?, position: String?, profileImageURL: String?) {
         nameLabel.text = name
         positionLabel.text = position
         imageView.image = nil
         if let profileImageURL = profileImageURL {
-            imageView.sd_setImageWithURL(NSURL(string: profileImageURL))
+            imageView.sd_setImage(with: URL(string: profileImageURL))
         }
     }
 }

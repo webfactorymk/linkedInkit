@@ -1,22 +1,22 @@
 import Foundation
 
-extension NSUserDefaults {
+extension UserDefaults {
     
-    private static let linkedInTokenKey = "wf.linkedInKit.accessTokenKey"
+    fileprivate static let linkedInTokenKey = "wf.linkedInKit.accessTokenKey"
     
-    class func lik_saveLinkedInAccessToken(token: LinkedInAccessToken?) {
+    class func lik_saveLinkedInAccessToken(_ token: LinkedInAccessToken?) {
         if let token = token {
-            standardUserDefaults().setObject(NSKeyedArchiver.archivedDataWithRootObject(token),
+            standard.set(NSKeyedArchiver.archivedData(withRootObject: token),
                                              forKey: linkedInTokenKey)
         } else {
-            standardUserDefaults().removeObjectForKey(linkedInTokenKey)
+            standard.removeObject(forKey: linkedInTokenKey)
         }
-        standardUserDefaults().synchronize()
+        standard.synchronize()
     }
     
     class func lik_getLinkedInAccessToken() -> LinkedInAccessToken? {
-        if let data = standardUserDefaults().objectForKey(linkedInTokenKey) as? NSData {
-            return NSKeyedUnarchiver.unarchiveObjectWithData(data) as? LinkedInAccessToken
+        if let data = standard.object(forKey: linkedInTokenKey) as? Data {
+            return NSKeyedUnarchiver.unarchiveObject(with: data) as? LinkedInAccessToken
         }
         
         return nil

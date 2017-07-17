@@ -1,16 +1,16 @@
 import Foundation
 
-public class LinkedInAccessToken: NSObject, NSCoding {
+open class LinkedInAccessToken: NSObject, NSCoding {
 
-    private static let AccessTokenKey = "WF.LinkedIn.accessTokenKey"
-    private static let ExpireDateKey = "WF.LinkedIn.expireDateKey"
-    private static let IsMobileSDKKey = "WF.LinkedIn.mobileSDKKey"
+    fileprivate static let AccessTokenKey = "WF.LinkedIn.accessTokenKey"
+    fileprivate static let ExpireDateKey = "WF.LinkedIn.expireDateKey"
+    fileprivate static let IsMobileSDKKey = "WF.LinkedIn.mobileSDKKey"
     
-    public var accessToken: String?
-    public var expireDate: NSDate?
-    public var isSDK: Bool?
+    open var accessToken: String?
+    open var expireDate: Date?
+    open var isSDK: Bool?
     
-    init(withAccessToken accessToken: String?, expireDate: NSDate?, isSDK: Bool?) {
+    init(withAccessToken accessToken: String?, expireDate: Date?, isSDK: Bool?) {
         super.init()
         
         self.accessToken = accessToken
@@ -19,14 +19,14 @@ public class LinkedInAccessToken: NSObject, NSCoding {
     }
     
     required public init?(coder aDecoder: NSCoder) {
-        accessToken = aDecoder.decodeObjectForKey(LinkedInAccessToken.AccessTokenKey) as? String
-        expireDate = aDecoder.decodeObjectForKey(LinkedInAccessToken.ExpireDateKey) as? NSDate
-        isSDK = aDecoder.decodeObjectForKey(LinkedInAccessToken.IsMobileSDKKey) as? Bool
+        accessToken = aDecoder.decodeObject(forKey: LinkedInAccessToken.AccessTokenKey) as? String
+        expireDate = aDecoder.decodeObject(forKey: LinkedInAccessToken.ExpireDateKey) as? Date
+        isSDK = aDecoder.decodeObject(forKey: LinkedInAccessToken.IsMobileSDKKey) as? Bool
     }
     
-    public func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(accessToken, forKey: LinkedInAccessToken.AccessTokenKey)
-        aCoder.encodeObject(expireDate, forKey: LinkedInAccessToken.ExpireDateKey)
-        aCoder.encodeObject(isSDK, forKey: LinkedInAccessToken.IsMobileSDKKey)
+    open func encode(with aCoder: NSCoder) {
+        aCoder.encode(accessToken, forKey: LinkedInAccessToken.AccessTokenKey)
+        aCoder.encode(expireDate, forKey: LinkedInAccessToken.ExpireDateKey)
+        aCoder.encode(isSDK, forKey: LinkedInAccessToken.IsMobileSDKKey)
     }
 }

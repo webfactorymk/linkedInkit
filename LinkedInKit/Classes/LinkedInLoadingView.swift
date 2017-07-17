@@ -5,7 +5,7 @@ public protocol LinkedInLoadingViewProtocol {
     func stopAnimating()
 }
 
-public class LinkedInLoadingView: UIView, LinkedInLoadingViewProtocol {
+open class LinkedInLoadingView: UIView, LinkedInLoadingViewProtocol {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -16,7 +16,7 @@ public class LinkedInLoadingView: UIView, LinkedInLoadingViewProtocol {
     }
     
     //Override this methods
-    public func startAnimating() { }
+    open func startAnimating() { }
 
-    public func stopAnimating() { }
+    open func stopAnimating() { }
 }

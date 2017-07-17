@@ -3,7 +3,7 @@ import LinkedInKit
 
 class CustomLoadingView: LinkedInLoadingView {
     
-    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -16,7 +16,7 @@ class CustomLoadingView: LinkedInLoadingView {
     }
     
     func setupView() {
-        let screenFrame = UIScreen.mainScreen().bounds
+        let screenFrame = UIScreen.main.bounds
         activityIndicator.frame = CGRect(x: (screenFrame.width - 100)/2,
                                          y: (screenFrame.height - 100)/2,
                                          width: 100,

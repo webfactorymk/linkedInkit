@@ -10,101 +10,100 @@ class LinkedInWebProvider: LinkedInProvider {
     var presentingViewController: UIViewController?
     
     weak var viewControllerDelegate: LinkedInAuthorizationViewControllerDelegate?
-    private var requestManager: Alamofire.Manager
+    fileprivate var requestManager: Alamofire.SessionManager
     
     init() {
-        requestManager = Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+        requestManager = SessionManager(configuration: URLSessionConfiguration.default)
     }
     
-    func signIn(success: LinkedInAuthSuccessCallback?,
+    func signIn(_ success: LinkedInAuthSuccessCallback?,
                 failure: LinkedInAuthFailureCallback?) {
         getAuthorizationCode(withSuccessCallback: { [weak self] (code) in
             self?.getAccessToken(forAuthorizationCode: code,
                 success: { (token) in
                     LinkedInTokenManager.sharedManager.accessToken = token
-                    success?(token: token)
+                    success?(token)
                 }, failure: { (error) in
                     if let error = error {
-                        failure?(error: NSError.error(withLIError: error))
+                        failure?(NSError.error(withLIError: error))
                     } else {
-                        failure?(error: error)
+                        failure?(error)
                     }
             })
             }, cancelCallback: {
-                failure?(error: NSError.error(withErrorDomain: .AuthCanceled, customDescription: ""))
+                failure?(NSError.error(withErrorDomain: .AuthCanceled, customDescription: ""))
             }, failureCallback: { (error) in
                 if let error = error {
-                    failure?(error: NSError.error(withLIError: error))
+                    failure?(NSError.error(withLIError: error))
                 } else {
-                    failure?(error: error)
+                    failure?(error)
                 }
         })
     }
     
-    func requestUrl(urlString: String,
-                    method: Alamofire.Method,
+    func requestUrl(_ urlString: String,
+                    method: Alamofire.HTTPMethod,
                     parameters: [String: AnyObject]?,
                     success: LinkedInRequestSuccessCallback?,
                     failure: LinkedInRequestFailureCallback?) {
         
         if LinkedInTokenManager.sharedManager.hasValidAccessToken {
             let token = LinkedInTokenManager.sharedManager.accessToken!.accessToken!
-            let authHeaderValue = NSString(format: Constants.HttpHeaderValues.authorization, token) as String
+            let authHeaderValue = NSString(format: Constants.HttpHeaderValues.authorization as NSString, token) as String
             let headers = [Constants.HttpHeaderKeys.authorization: authHeaderValue,
                            Constants.HttpHeaderKeys.format: Constants.HttpHeaderValues.format,
                            Constants.HttpHeaderKeys.contentType: Constants.HttpHeaderValues.contentType]
-            let encoding = (method == .GET) ? Alamofire.ParameterEncoding.URL : Alamofire.ParameterEncoding.JSON
+            let encoding: ParameterEncoding = (method == .get) ? URLEncoding.default : JSONEncoding.default
             
-            _ = requestManager.request(
-                method,
-                urlString,
-                parameters: parameters,
-                encoding: encoding,
-                headers: headers).validate().responseJSON(completionHandler: { response in
+            _ = requestManager.request(urlString,
+                                       method: method,
+                                       parameters: parameters,
+                                       encoding: encoding,
+                                       headers: headers).validate().responseJSON(completionHandler: { response in
                     switch response.result {
-                    case .Success(let JSON):
+                    case .success(let JSON):
                         let sdkResponse = LinkedInSDKResponse()
                         sdkResponse.jsonObject = (JSON as! [String: AnyObject])
                         sdkResponse.statusCode = 200
                         
-                        success?(response: sdkResponse)
-                    case .Failure(let error):
-                        failure?(error: NSError.error(withLIError: error))
+                        success?(sdkResponse)
+                    case .failure(let error):
+                        failure?(NSError.error(withLIError: error as NSError))
                     }
                 })
         } else {
-            failure?(error: NSError.error(withErrorDomain: LinkedInErrorDomain.NotAuthenticated))
+            failure?(NSError.error(withErrorDomain: LinkedInErrorDomain.NotAuthenticated))
         }
     }
     
-    func openProfileWithMemberId(id: String,
-                                 success: ((success: Bool) -> ())?,
-                                 failure: ((error: NSError) -> ())?) {
-        let route = NSString(format: ApiRoutes.profileDetailsRoute, id)
+    func openProfileWithMemberId(_ id: String,
+                                 success: ((_ success: Bool) -> ())?,
+                                 failure: ((_ error: NSError) -> ())?) {
+        let route = NSString(format: ApiRoutes.profileDetailsRoute as NSString, id)
         
         // Get user details in order to acquire linkedIn profile url
         requestUrl(route as String,
-                   method: .GET,
+                   method: .get,
                    parameters: nil,
                    success: { (response) in
                     
-                    var memberURL: NSURL? = nil
-                    if let json = response?.jsonObject, urlJSON = json[Constants.Parameters.profileUrl] as? [String: AnyObject] {
+                    var memberURL: URL? = nil
+                    if let json = response?.jsonObject, let urlJSON = json[Constants.Parameters.profileUrl] as? [String: AnyObject] {
                         if let urlString = urlJSON[Constants.Parameters.url] as? String {
-                            memberURL = NSURL(string: urlString)
+                            memberURL = URL(string: urlString)
                         }
                     }
                     
-                    if let memberURL = memberURL where UIApplication.sharedApplication().canOpenURL(memberURL) {
-                        UIApplication.sharedApplication().openURL(memberURL)
-                        success?(success: true)
+                    if let memberURL = memberURL, UIApplication.shared.canOpenURL(memberURL) {
+                        UIApplication.shared.openURL(memberURL)
+                        success?(true)
                     } else {
-                        failure?(error: NSError.error(withErrorDomain: .ParseFailure))
+                        failure?(NSError.error(withErrorDomain: .ParseFailure))
                     }
                     
             }, failure: { (error) in
                 let failureError = error ?? NSError.error(withErrorDomain: .RESTFailure)
-                failure?(error: failureError)
+                failure?(failureError)
         })
     }
     
@@ -114,15 +113,15 @@ class LinkedInWebProvider: LinkedInProvider {
     }
     
     //MARK: Helper methods
-    private func clearLinkedInCookies() {
-        let storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+    fileprivate func clearLinkedInCookies() {
+        let storage = HTTPCookieStorage.shared
         if let cookies = storage.cookies {
             for cookie in cookies {
-                if cookie.domain.containsString(Constants.linkedInDomain) {
+                if cookie.domain.contains(Constants.linkedInDomain) {
                     storage.deleteCookie(cookie)
                 }
             }
-            NSUserDefaults.standardUserDefaults().synchronize()
+            UserDefaults.standard.synchronize()
         }
     }
     
@@ -135,77 +134,77 @@ class LinkedInWebProvider: LinkedInProvider {
                 configuration: linkedInConfiguration,
                 successCallback: { [weak self] (code) in
                     self?.hideAuthorizationViewController()
-                    successCallback?(code: code)
+                    successCallback?(code)
                 }, cancelCallback: { [weak self] in
                     self?.hideAuthorizationViewController()
                     cancelCallback?()
             }) { [weak self] (error) in
                 self?.hideAuthorizationViewController()
-                failureCallback?(error: error)
+                failureCallback?(error)
             }
             viewController.delegate = viewControllerDelegate
             showAuthorizationViewController(viewController)
         } else {
-            failureCallback?(error: NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
+            failureCallback?(NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
         }
     }
     
     func getAccessToken(forAuthorizationCode code: String,
-                                             success: LinkedInAuthSuccessCallback,
-                                             failure: LinkedInAuthFailureCallback) {
+                                             success: @escaping LinkedInAuthSuccessCallback,
+                                             failure: @escaping LinkedInAuthFailureCallback) {
         if let linkedInConfiguration = linkedInConfiguration {
-            let redirectURL = linkedInConfiguration.redirectURL.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())!
-            let accessTokenURL = NSString(format: ApiRoutes.accessTokenRoute,
+            let redirectURL = linkedInConfiguration.redirectURL.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+            let accessTokenURL = NSString(format: ApiRoutes.accessTokenRoute as NSString,
                                           code, redirectURL,
                                           linkedInConfiguration.clientID,
                                           linkedInConfiguration.clientSecret)
-            
-            requestManager.request(.POST,
+            requestManager.request(
                 accessTokenURL as String,
+                method: .post,
                 parameters: nil,
-                encoding: .URL,
+                encoding: URLEncoding.default,
                 headers: nil)
                 .validate()
                 .responseJSON { response in
                     switch response.result {
-                    case .Success(let JSON):
+                    case .success(let JSON):
                         if let json = JSON as? [String: AnyObject] {
                             if let accessToken = json[Constants.Parameters.accessToken] as? String,
-                                expireTimestamp = json[Constants.Parameters.expiresIn] as? Double {
-                                let expireDate = NSDate(timeIntervalSinceNow: NSTimeInterval(expireTimestamp / 1000))
+                                let expireTimestamp = json[Constants.Parameters.expiresIn] as? Double {
+                                let expireDate = Date(timeIntervalSinceNow: TimeInterval(expireTimestamp / 1000))
                                 let token = LinkedInAccessToken(withAccessToken: accessToken,
                                     expireDate: expireDate,
                                     isSDK: false)
                                 
-                                success(token: token)
+                                success(token)
                             } else {
-                                failure(error: NSError.error(withErrorDomain: .ParseFailure))
+                                failure(NSError.error(withErrorDomain: .ParseFailure))
                             }
                         } else {
-                            failure(error: NSError.error(withErrorDomain: .ParseFailure))
+                            failure(NSError.error(withErrorDomain: .ParseFailure))
                         }
-                    case .Failure(let error):
-                        failure(error: error)
+                    case .failure(let error):
+                        failure(error as NSError)
                     }
             }
         } else {
-            failure(error: NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
+            failure(NSError.error(withErrorDomain: .SetupFailure, customDescription: ""))
         }
     }
     
     //Helper methods
-    func showAuthorizationViewController(viewController: LinkedInAuthorizationViewController) {
-        presentingViewController = UIApplication.sharedApplication().keyWindow?.rootViewController
+    func showAuthorizationViewController(_ viewController: LinkedInAuthorizationViewController) {
+        presentingViewController = UIApplication.shared.keyWindow?.rootViewController
         let navigationController = UINavigationController(rootViewController: viewController)
         
-        if UIDevice.currentDevice().userInterfaceIdiom == UIUserInterfaceIdiom.Pad {
-            navigationController.modalPresentationStyle = UIModalPresentationStyle.FormSheet
+        if UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad {
+            navigationController.modalPresentationStyle = UIModalPresentationStyle.formSheet
         }
         
-        presentingViewController?.presentViewController(navigationController, animated: true, completion: nil)
+        presentingViewController?.present(navigationController, animated: true, completion: nil)
     }
     
     func hideAuthorizationViewController() {
-        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+        presentingViewController?.dismiss(animated: true, completion: nil)
     }
 }

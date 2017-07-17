@@ -1,16 +1,16 @@
 import Foundation
 
-public class LinkedInSDKResponse: NSObject {
+open class LinkedInSDKResponse: NSObject {
     
-    public var statusCode: Int?
-    public var jsonObject: [String: AnyObject]?
+    open var statusCode: Int?
+    open var jsonObject: [String: AnyObject]?
     
-    public init(withData data: NSData, statusCode: Int) {
+    public init(withData data: Data, statusCode: Int) {
         super.init()
         self.statusCode = statusCode
         
         do {
-            let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers)
+            let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)
             if let json = json as? [String: AnyObject] {
                 self.jsonObject = json
             }
