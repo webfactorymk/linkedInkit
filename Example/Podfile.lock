@@ -1,5 +1,5 @@
 PODS:
- - Alamofire (3.5.0)
+  - Alamofire (3.5.0)
   - LinkedInKit (0.1.1):
     - Alamofire
   - SDWebImage (3.8.2):
