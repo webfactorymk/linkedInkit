@@ -1,15 +1,15 @@
 Pod::Spec.new do |s|
   s.name             = 'LinkedInKit'
   s.version          = '0.1.2'
-  s.summary          = 'A short description of LinkedInKit.'
+  s.summary          = 'LinkedInKit - Framework for LinkedIn authentication'
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+LinkedInKit is a framework for LinkedIn authentication both through the LinkedIn app or with Browser Oauth 2 authentication. It is build as a simple wrapper for linkedIn-sdk & linkedIn REST Api written in Swift. Based on https://github.com/tonyli508/LinkedinSwift
                        DESC
 
-  s.homepage         = 'https://github.com/<GITHUB_USERNAME>/LinkedInKit'
+  s.homepage         = 'https://github.com/WebFactoryMk/linkedInkit'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Mariana' => 'mariana.ristovska@webfactory.mk', 'Gordan' => 'gordan.cvetkovski@webfactory.mk' }
-  s.source           = { :git => 'https://github.com/<GITHUB_USERNAME>/LinkedInKit.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/WebFactoryMk/linkedInkit.git', :tag => s.version.to_s }
   s.requires_arc = true
   s.ios.deployment_target = '8.0'
 
