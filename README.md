@@ -39,18 +39,6 @@ For Swift 2.2 use:
 pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift2.2'
 ```
 
-####Backwards compatibility
-
-For Swift 2.3 use:
-```ruby
-pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift2.3'
-```
-
-For Swift 2.2 use:
-```ruby
-pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift2.2'
-``
-
 ## Usage
 
 For project setup please see [Getting Started with the Mobile SDK for iOS](https://developer.linkedin.com/docs/ios-sdk) and [Getting started with the REST API
