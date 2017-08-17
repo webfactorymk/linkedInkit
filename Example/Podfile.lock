@@ -12,13 +12,13 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   LinkedInKit:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
   Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
   LinkedInKit: f44f78c7b1ea7e37ee8b497118eccb5c8fca95bc
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
 
-PODFILE CHECKSUM: 3eb5acf89226aee68dbc25a124077458cfff301b
+PODFILE CHECKSUM: 0a46662fc15afe6a12b9dcd9dc9ca4a42016b95d
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.2.1
