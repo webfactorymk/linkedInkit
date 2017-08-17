@@ -24,8 +24,20 @@ LinkedInKit is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'LinkedInKit', :git => 'http://git.wf.mk/wf-pods/LinkedInKit.git'
+pod 'LinkedInKit'
 ```
+
+####Backwards compatibility
+
+For Swift 2.3 use:
+```ruby
+pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift2.3'
+```
+
+For Swift 2.2 use:
+```ruby
+pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift2.2'
+``
 
 ## Usage
 
