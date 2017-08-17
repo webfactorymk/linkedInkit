@@ -27,6 +27,18 @@ it, simply add the following line to your Podfile:
 pod 'LinkedInKit'
 ```
 
+#### Backwards compatibility
+
+For Swift 2.3 use:
+```ruby
+pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift2.3'
+```
+
+For Swift 2.2 use:
+```ruby
+pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift2.2'
+```
+
 ####Backwards compatibility
 
 For Swift 2.3 use:
