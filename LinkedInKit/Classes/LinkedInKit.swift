@@ -3,19 +3,19 @@ import Alamofire
 
 open class LinkedInKit {
     
-    open static var isAuthorized: Bool {
+    public static var isAuthorized: Bool {
         return LinkedInTokenManager.sharedManager.isAuthorized
     }
     
-    open static var isLinkedInAppInstalled: Bool {
+    public static var isLinkedInAppInstalled: Bool {
         return UIApplication.shared.canOpenURL(URL(string: Constants.linkedInScheme)!)
     }
     
-    open static var isTokenFromMobileSDK: Bool {
+    public static var isTokenFromMobileSDK: Bool {
         return LinkedInTokenManager.sharedManager.accessToken?.isSDK ?? false
     }
     
-    static open var authViewControllerDelegate: LinkedInAuthorizationViewControllerDelegate? {
+    public static var authViewControllerDelegate: LinkedInAuthorizationViewControllerDelegate? {
         set { LinkedInWebProvider.sharedProvider.viewControllerDelegate = newValue }
         get { return LinkedInWebProvider.sharedProvider.viewControllerDelegate }
 
