@@ -51,7 +51,7 @@ struct CustomErrorDescription {
 struct ApiRoutes {
     static let authorizationRoute = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=%@&state=%@&redirect_uri=%@&scope=%@"
     static let accessTokenRoute = "http://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code=%@&redirect_uri=%@&client_id=%@&client_secret=%@"
-    static let profileDetailsRoute = "https://api.linkedin.com/v1/people/id=%@?format=json"
+    static let profileDetailsRoute = "https://api.linkedin.com/v2/me" //"https://api.linkedin.com/v1/people/id=%@?format=json"
 }
 
 let iPadWebjs = "var meta = document.createElement('meta'); meta.setAttribute( 'name', 'viewport' ); meta.setAttribute( 'content', 'width = 540px, initial-scale = 1.0, user-scalable = yes' ); document.getElementsByTagName('head')[0].appendChild(meta)"

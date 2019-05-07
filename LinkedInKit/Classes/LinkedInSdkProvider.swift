@@ -10,9 +10,9 @@ class LinkedInSdkProvider: LinkedInProvider {
                 failure: LinkedInAuthFailureCallback?) {        
         if let linkedInConfiguration = linkedInConfiguration {
             LISDKSessionManager.createSession(withAuth: linkedInConfiguration.permissions,
-                                                      state: linkedInConfiguration.state,
-                                                      showGoToAppStoreDialog: false,
-                                                      successBlock:
+                                              state: linkedInConfiguration.state,
+                                              showGoToAppStoreDialog: false,
+                                              successBlock:
                 { [weak self] (response) in
                     let accessToken = self?.tokenFromSDKSession(LISDKSessionManager.sharedInstance().session)
                     LinkedInTokenManager.sharedManager.accessToken = accessToken

@@ -8,7 +8,9 @@ open class LinkedInKit {
     }
     
     public static var isLinkedInAppInstalled: Bool {
-        return UIApplication.shared.canOpenURL(URL(string: Constants.linkedInScheme)!)
+        return false
+        // ⚠️⚠️⚠️ Linkedin has turned down the support of The Mobile SDK link. Using web login only for now. ⚠️⚠️⚠️
+        //        return UIApplication.shared.canOpenURL(URL(string: Constants.linkedInScheme)!)
     }
     
     public static var isTokenFromMobileSDK: Bool {
@@ -74,7 +76,6 @@ open class LinkedInKit {
     class func linkedInProvider() -> LinkedInProvider {
         if isAuthorized {
             if isLinkedInAppInstalled && isTokenFromMobileSDK { return LinkedInSdkProvider.sharedProvider }
-            
             return LinkedInWebProvider.sharedProvider
         } else if isLinkedInAppInstalled {
             return LinkedInSdkProvider.sharedProvider

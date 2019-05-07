@@ -25,9 +25,9 @@ class ViewController: UIViewController {
         setupViews()
         
         NotificationCenter.default.addObserver(self,
-                                                         selector: #selector(applicationDidBecomeActive),
-                                                         name: UIApplication.didBecomeActiveNotification,
-                                                         object: nil)
+                                               selector: #selector(applicationDidBecomeActive),
+                                               name: UIApplication.didBecomeActiveNotification,
+                                               object: nil)
     }
     
     deinit {

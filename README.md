@@ -18,6 +18,8 @@ To run the example project, clone the repo, and run `pod install` from the **Exa
 ## Requirements
 iOS 8.0+
 
+⚠️⚠️⚠️ Linkedin has turned down the support of The Mobile SDK. Using web login only for now. ⚠️⚠️⚠️
+
 ## Installation
 
 LinkedInKit is available through [CocoaPods](http://cocoapods.org). To install

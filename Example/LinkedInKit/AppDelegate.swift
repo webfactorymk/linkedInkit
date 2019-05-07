@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
         
+//        let permissionsArray = ["r_liteprofile","r_emailaddress","w_member_social"]
         let permissionsArray = ["r_basicprofile","r_emailaddress","rw_company_admin", "w_share"]
         let configuration = LinkedInConfiguration(withClientID: "78mqqrk2mcaied",
                                                   clientSecret: "4o2gtBTLePRKJi4H",
