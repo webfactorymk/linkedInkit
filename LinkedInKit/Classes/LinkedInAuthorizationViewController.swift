@@ -16,12 +16,12 @@ public extension LinkedInAuthorizationViewControllerDelegate {
     }
     
     func linkedInViewControllerTitleAttributtedString() -> NSAttributedString? {
-        let attributes = [NSForegroundColorAttributeName: UIColor.black]
+        let attributes = [NSAttributedStringKey.foregroundColor: UIColor.black]
         return NSAttributedString(string: "Sign In", attributes: attributes)
     }
     
     func linkedInViewControllerCancelAttributtedString() -> NSAttributedString? {
-        let attributes = [NSForegroundColorAttributeName: UIColor.black]
+        let attributes = [NSAttributedStringKey.foregroundColor: UIColor.black]
         return NSAttributedString(string: "Cancel", attributes: attributes)
     }
     
@@ -103,7 +103,7 @@ class LinkedInAuthorizationViewController: UIViewController {
         if let titleAttrString = delegate?.linkedInViewControllerTitleAttributtedString() {
             label.attributedText = titleAttrString
         } else {
-            let attributes = [NSForegroundColorAttributeName: UIColor.black]
+            let attributes = [NSAttributedStringKey.foregroundColor: UIColor.black]
             label.attributedText = NSAttributedString(string: "Sign In", attributes: attributes)
         }
         label.sizeToFit()
@@ -114,7 +114,7 @@ class LinkedInAuthorizationViewController: UIViewController {
             customButton.setAttributedTitle(cancelAttrString,
                                             for: .normal)
         } else {
-            let attributes = [NSForegroundColorAttributeName: UIColor.black]
+            let attributes = [NSAttributedStringKey.foregroundColor: UIColor.black]
             let attributedTitle = NSAttributedString(string: "Cancel", attributes: attributes)
             customButton.setAttributedTitle(attributedTitle,
                                             for: .normal)
@@ -136,7 +136,7 @@ class LinkedInAuthorizationViewController: UIViewController {
         view.addSubview(webView)
     }
     
-    func cancelTapped() {
+    @objc func cancelTapped() {
         cancelCallback?()
     }
     

@@ -34,7 +34,7 @@ class ViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    func applicationDidBecomeActive() {
+    @objc func applicationDidBecomeActive() {
         if !LinkedInKit.isAuthorized { signOut() }
     }
     
@@ -73,7 +73,7 @@ class ViewController: UIViewController {
         view.addSubview(activityIndicator)
     }
     
-    func onButton() {
+    @objc func onButton() {
         if !LinkedInKit.isAuthorized {
             activityIndicator.startAnimating()
             LinkedInKit.authenticate({ [weak self] (token) in

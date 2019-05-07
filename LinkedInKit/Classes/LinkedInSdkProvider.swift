@@ -44,7 +44,8 @@ class LinkedInSdkProvider: LinkedInProvider {
                 // append params to url
                 if let requestURL = URL(string: urlString), let parameters = parameters {
                     var urlComponents = URLComponents(url: requestURL, resolvingAgainstBaseURL: false)
-                    urlComponents?.queryItems = urlComponents?.queryItems ?? [URLQueryItem]()
+                    let queryItems = urlComponents?.queryItems
+                    urlComponents?.queryItems = queryItems ?? [URLQueryItem]()
                     
                     for item in parameters {
                         if let value = item.1 as? String {
