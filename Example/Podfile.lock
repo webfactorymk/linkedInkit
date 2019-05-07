@@ -1,10 +1,10 @@
 PODS:
-  - Alamofire (4.5.0)
-  - LinkedInKit (1.0.0):
+  - Alamofire (4.8.2)
+  - LinkedInKit (1.1.0):
     - Alamofire
-  - SDWebImage (4.0.0):
-    - SDWebImage/Core (= 4.0.0)
-  - SDWebImage/Core (4.0.0)
+  - SDWebImage (5.0.2):
+    - SDWebImage/Core (= 5.0.2)
+  - SDWebImage/Core (5.0.2)
 
 DEPENDENCIES:
   - LinkedInKit (from `../`)
@@ -20,10 +20,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Alamofire: f28cdffd29de33a7bfa022cbd63ae95a27fae140
-  LinkedInKit: ed4bc448f0e950aa1fcb2b201bd5badef1407675
-  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
+  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  LinkedInKit: cc064fd31ff61ce63358beb34d5b0b2040523cd4
+  SDWebImage: 6764b5fa0f73c203728052955dbefa2bf1f33282
 
-PODFILE CHECKSUM: 0a46662fc15afe6a12b9dcd9dc9ca4a42016b95d
+PODFILE CHECKSUM: f6db816f4d0a9eda8dfee53ce3fd822366bde4be
 
 COCOAPODS: 1.5.3
