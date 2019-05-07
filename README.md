@@ -29,6 +29,11 @@ pod 'LinkedInKit'
 
 #### Backwards compatibility
 
+For Swift 3.0 use:
+```ruby
+pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift3.0'
+```
+
 For Swift 2.3 use:
 ```ruby
 pod 'LinkedInKit', :git => 'https://github.com/webfactorymk/linkedInkit.git', :branch => 'swift2.3'
