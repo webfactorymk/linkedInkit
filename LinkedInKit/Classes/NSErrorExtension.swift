@@ -72,7 +72,7 @@ public enum LinkedInErrorDomain: String, CustomStringConvertible {
 
 public extension NSError {
     
-    public var customDomain: LinkedInErrorDomain {
+    var customDomain: LinkedInErrorDomain {
         if let tempDomain = LinkedInErrorDomain(rawValue: self.domain) {
             return tempDomain
         }
