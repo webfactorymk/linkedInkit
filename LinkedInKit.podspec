@@ -11,7 +11,7 @@ LinkedInKit is a framework for LinkedIn authentication both through the LinkedIn
   s.author           = { 'Mariana' => 'mariana.ristovska@webfactory.mk', 'Gordan' => 'gordan.cvetkovski@webfactory.mk' }
   s.source           = { :git => 'https://github.com/WebFactoryMk/linkedInkit.git', :tag => s.version.to_s }
   s.requires_arc = true
-  s.ios.deployment_target = '8.1'
+  s.ios.deployment_target = '8.0'
 
   s.vendored_frameworks = 'linkedin-sdk.framework'
   s.source_files = 'LinkedInKit/Classes/**/*', 'linkedin-sdk.framework/Headers/LISDKAccessToken.h', 'linkedin-sdk.framework/Headers/LISDKAPIError.h', 'linkedin-sdk.framework/Headers/LISDKAPIHelper.h', 'linkedin-sdk.framework/Headers/LISDKAPIResponse.h', 'linkedin-sdk.framework/Headers/LISDKCallbackHandler.h', 'linkedin-sdk.framework/Headers/LISDKDeeplinkHelper.h', 'linkedin-sdk.framework/Headers/LISDKErrorCode.h', 'linkedin-sdk.framework/Headers/LISDKPermission.h', 'linkedin-sdk.framework/Headers/LISDKSession.h', 'linkedin-sdk.framework/Headers/LISDKSessionManager.h'
