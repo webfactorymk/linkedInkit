@@ -5,6 +5,6 @@
       location = "group:LinkedInKit.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Pods/Pods.xcodeproj">
+      location = "group:/Users/mariana.ristovska/Desktop/Projects/iOS/linkedin-kit/Example/Pods/deploy.xcodeproj">
    </FileRef>
 </Workspace>
