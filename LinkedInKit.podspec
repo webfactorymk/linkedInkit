@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'LinkedInKit'
-  s.version          = '1.1.0'
+  s.version          = '1.2.1'
   s.summary          = 'LinkedInKit - Framework for LinkedIn authentication'
   s.description      = <<-DESC
 LinkedInKit is a framework for LinkedIn authentication both through the LinkedIn app or with the Browser OAuth 2 authentication. It is built as a simple wrapper for linkedIn-sdk & linkedIn REST API written in Swift. Based on https://github.com/tonyli508/LinkedinSwift
