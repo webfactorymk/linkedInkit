@@ -1,3 +1,5 @@
+🛑⚠️ DEPRICATED! LinkedIn has modified their API and access levels, so this library is no longer functional. ⚠️🛑
+
 # LinkedInKit
 
 [![CI Status](http://img.shields.io/travis/Mariana/LinkedInKit.svg?style=flat)](https://travis-ci.org/Mariana/LinkedInKit)
